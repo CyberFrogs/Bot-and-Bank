@@ -5,286 +5,139 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bot & Bank: AI Tycoon</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    background: radial-gradient(ellipse at top, #0a1628 0%, #05080f 60%);
-    color: #e6f0ff;
-    font-family: 'Courier New', monospace;
-    overflow-x: hidden;
-    min-height: 100vh;
-  }
-  .container { max-width: 480px; margin: 0 auto; padding: 16px; }
-  h1 {
-    text-align: center;
-    color: #00d4ff;
-    font-size: 26px;
-    margin-bottom: 4px;
-    letter-spacing: 2px;
-    text-shadow: 0 0 20px rgba(0,212,255,0.5);
-  }
-  .sub {
-    text-align: center;
-    color: #ff00ff;
-    font-size: 11px;
-    margin-bottom: 14px;
-  }
-  .company {
-    background: linear-gradient(135deg, #001220, #002840);
-    border: 1px solid #00d4ff;
-    padding: 20px;
-    text-align: center;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    box-shadow: 0 0 30px rgba(0,212,255,0.15);
-  }
-  .company h2 { font-size: 12px; color: #7aaacc; letter-spacing: 2px; margin-bottom: 6px; }
-  .credits { font-size: 32px; color: #00ff99; font-weight: bold; }
-  .per-sec { font-size: 11px; color: #88aacc; margin-top: 4px; }
-  .prestige-info {
-    background: linear-gradient(135deg, #1a0030, #2d0050);
-    border: 1px solid #ff00ff;
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 12px;
-  }
-  .prestige-info button {
-    background: linear-gradient(135deg, #ff00ff, #aa00aa);
-    color: #fff;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-left: 8px;
-    font-size: 11px;
-  }
-  .prestige-info button:disabled {
-    background: #555;
-    color: #888;
-    cursor: not-allowed;
-  }
-  .click-btn {
-    width: 100%;
-    padding: 18px;
-    background: linear-gradient(135deg, #00d4ff, #0077cc);
-    color: #000;
-    font-size: 20px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    margin: 10px 0;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0,212,255,0.3);
-  }
-  .click-btn:active { transform: scale(0.97); }
-  .sections { display: grid; gap: 8px; }
-  .agents {
-    background: rgba(0, 20, 40, 0.8);
-    border: 1px solid #003355;
-    padding: 10px;
-    border-radius: 6px;
-  }
-  .section-title {
-    color: #00d4ff;
-    font-size: 12px;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-  }
-  .agent {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 0;
-    border-bottom: 1px solid #002840;
-  }
-  .agent:last-child { border: none; }
-  .agent-name { font-size: 12px; color: #aaccff; }
-  .agent-extra { font-size: 10px; color: #6688aa; }
-  .agent-cost { color: #ffaa00; font-size: 10px; margin-top: 2px; }
-  .buy-btn {
-    padding: 4px 10px;
-    background: #00d4ff;
-    color: #000;
-    border: none;
-    cursor: pointer;
-    font-size: 10px;
-    border-radius: 4px;
-    font-weight: bold;
-  }
-  .buy-btn:disabled { background: #334455; color: #556677; cursor: not-allowed; }
-  .upgrades {
-    background: rgba(20, 0, 40, 0.8);
-    border: 1px solid #440088;
-    padding: 10px;
-    border-radius: 6px;
-  }
-  .upgrade {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 0;
-    border-bottom: 1px solid #220044;
-    cursor: pointer;
-  }
-  .upgrade:last-child { border: none; }
-  .upgrade.owned { opacity: 0.4; cursor: default; }
-  .actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    margin-top: 8px;
-  }
-  .action-btn {
-    padding: 8px;
-    background: rgba(0, 40, 60, 0.6);
-    border: 1px solid #004466;
-    color: #aaccff;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 11px;
-    font-family: inherit;
-  }
-  .action-btn:hover { background: rgba(0, 60, 90, 0.8); }
-  .achievements {
-    background: rgba(30, 20, 0, 0.7);
-    border: 1px solid #664400;
-    padding: 10px;
-    border-radius: 6px;
-  }
-  .achieve {
-    font-size: 11px;
-    padding: 2px 0;
-    color: #887744;
-  }
-  .achieve.unlocked { color: #ffcc00; }
-  .brand {
-    text-align: center;
-    color: #ff00ff;
-    font-size: 10px;
-    margin-top: 10px;
-  }
-  #particles {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .container { position: relative; z-index: 1; }
-  .toast {
-    position: fixed;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 212, 255, 0.2);
-    border: 1px solid #00d4ff;
-    color: #00d4ff;
-    padding: 6px 14px;
-    border-radius: 4px;
-    font-size: 11px;
-    z-index: 100;
-    pointer-events: none;
-    transition: opacity 0.5s;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  body { background: #05080f; color: #e6f0ff; font-family: 'Courier New', monospace; overflow: hidden; }
+  #game { display: block; margin: 0 auto; background: #0a1628; image-rendering: pixelated; }
+  #ui { position: absolute; top: 0; left: 0; width: 100%; pointer-events: none; }
+  #ui > * { pointer-events: auto; }
+  .hud { display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(0,0,0,0.6); }
+  .credits { font-size: 18px; color: #00ff99; font-weight: bold; }
+  .rate { font-size: 11px; color: #88aacc; }
+  .room-name { color: #00d4ff; font-size: 12px; letter-spacing: 1px; }
+  #quests { position: absolute; top: 50px; left: 10px; background: rgba(0,20,40,0.85); border: 1px solid #003355; padding: 8px; border-radius: 6px; font-size: 11px; max-width: 220px; }
+  .quest { padding: 2px 0; color: #aaccff; }
+  .quest.done { color: #00ff99; }
+  #dialog { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); border: 2px solid #00d4ff; padding: 12px 18px; border-radius: 8px; font-size: 13px; max-width: 90%; text-align: center; display: none; }
+  #dialog button { margin-top: 8px; padding: 6px 14px; background: #00d4ff; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: inherit; }
+  #controls { position: absolute; bottom: 10px; right: 10px; font-size: 10px; color: #6688aa; text-align: right; }
+  .brand { position: absolute; bottom: 4px; left: 10px; font-size: 10px; color: #ff00ff; }
 </style>
 </head>
 <body>
-<canvas id="particles"></canvas>
-<div class="container">
-  <h1>🤖 BOT & BANK</h1>
-  <div class="sub">@NeuralNetWorth // AI Tycoon</div>
-
-  <div class="company">
-    <h2>YOUR AI EMPIRE</h2>
-    <div class="credits" id="credits">0 CREDITS</div>
-    <div class="per-sec" id="rate">0 / sec</div>
-    <div class="per-sec" id="prestige-display" style="color:#ff00ff;"></div>
-  </div>
-
-  <div class="prestige-info" id="prestige-box">
-    ⭐ Prestige Points: <span id="pp">0</span>
-    <span style="font-size:10px; color:#aaa;">(+<span id="pp-rate">0</span>/hr)</span><br>
-    <button id="prestige-btn" onclick="doPrestige()">⚡ PRESTIGE (+25% ALL)</button>
-  </div>
-
-  <button class="click-btn" onclick="earn(event)">⚡ EARN CREDITS</button>
-
-  <div class="sections">
-    <div class="agents">
-      <div class="section-title">🤖 Agents</div>
-      <div id="agents-list"></div>
+<canvas id="game"></canvas>
+<div id="ui">
+  <div class="hud">
+    <div>
+      <div class="credits" id="credits">0 CREDITS</div>
+      <div class="rate" id="rate">0 / sec</div>
     </div>
-
-    <div class="upgrades">
-      <div class="section-title">⚡ Upgrades</div>
-      <div id="upgrades-list"></div>
-    </div>
-
-    <div class="achievements">
-      <div class="section-title">🏆 Achievements</div>
-      <div id="achievements-list"></div>
+    <div class="room-name" id="room">LOBBY</div>
+    <div style="text-align:right;">
+      <div style="font-size:11px;color:#ff00ff;">⭐ <span id="pp">0</span> PP</div>
+      <div style="font-size:10px;color:#888;">Press E to interact</div>
     </div>
   </div>
-
-  <div class="actions">
-    <button class="action-btn" onclick="saveGame()">💾 Save</button>
-    <button class="action-btn" onclick="shareProgress()">📤 Share</button>
-    <button class="action-btn" onclick="resetGame()">🔄 Reset</button>
-    <button class="action-btn" onclick="resetAll()">⚠️ Full Wipe</button>
-  </div>
-
-  <div class="brand">@NeuralNetWorth // Built by AI, Owned by You</div>
+  <div id="quests"></div>
+  <div id="dialog"></div>
+  <div id="controls">WASD / Arrows = move<br>E = interact<br>1-4 = quick buy</div>
+  <div class="brand">@NeuralNetWorth</div>
 </div>
 
-<div class="toast" id="toast" style="opacity:0;"></div>
-
 <script>
-// ==================== DATA ====================
-let credits = 0;
-let totalEarned = 0;
-let rate = 0;
-let multiplier = 1;
-let prestigePoints = 0;
-let prestigeMultiplier = 1;
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const W = 480, H = 720;
+canvas.width = W; canvas.height = H;
+
+// ==================== WORLD ====================
+const TILE = 32;
+const MAP = [
+  "####################",
+  "#S     L        R  #",
+  "#  ###  ###  ###   #",
+  "#  #     #     #   #",
+  "#  #  O  #  M  #   #",
+  "#     ###  ###     #",
+  "#  ###        ###  #",
+  "#  #   T      #    #",
+  "#  #  ###  ### #   #",
+  "#     #     #      #",
+  "#  O  #  O  #      #",
+  "#     #     #      #",
+  "####################",
+];
+const ROOMS = { 'S': { name: 'STARTUP LOBBY', color: '#0a1628' }, 'L': { name: 'LEAD DEV BAY', color: '#001222' }, 'R': { name: 'RESEARCH LAB', color: '#1a0030' }, 'O': { name: 'OPEN OFFICE', color: '#001a12' }, 'M': { name: 'SERVER ROOM', color: '#12001a' }, 'T': { name: 'TERMINAL', color: '#000000' } };
+
+let player = { x: 2*TILE, y: 2*TILE, speed: 3, dir: {x:0,y:1}, moving: false, frame: 0 };
+let camera = { x: 0, y: 0 };
+let keys = {};
+let near = null;
+let dialogOpen = false;
+let showQuests = true;
+
+let credits = 0, totalEarned = 0, rate = 0, prestigeMultiplier = 1, prestigePoints = 0;
+let lastTick = Date.now();
 let lastSave = Date.now();
 
 let agents = [
-  {base:1, cost:10, name:"Support Bot", count:0, icon:"💬"},
-  {base:3, cost:50, name:"Email Agent", count:0, icon:"📧"},
-  {base:8, cost:200, name:"Content Worker", count:0, icon:"📱"},
-  {base:20, cost:1000, name:"Video Editor AI", count:0, icon:"🎬"},
-  {base:65, cost:5000, name:"Analytics Bot", count:0, icon:"📊", locked:true},
-  {base:300, cost:25000, name:"Chief AI Officer", count:0, icon:"🧠", locked:true},
+  { id:0, base:1, cost:10, owned:0, name:"Support Bot", icon:"💬", color:"#00d4ff" },
+  { id:1, base:3, cost:50, owned:0, name:"Email Agent", icon:"📧", color:"#00ff99" },
+  { id:2, base:8, cost:200, owned:0, name:"Content Worker", icon:"📱", color:"#ffaa00" },
+  { id:3, base:20, cost:1000, owned:0, name:"Video Editor AI", icon:"🎬", color:"#ff00ff" },
+  { id:4, base:65, cost:5000, owned:0, name:"Analytics Bot", icon:"📊", color:"#ff4444", locked:true },
+  { id:5, base:300, cost:25000, owned:0, name:"Chief AI Officer", icon:"🧠", color:"#ffff00", locked:true },
 ];
 
 let upgrades = [
-  {cost:500, bought:false, label:"Overclock Agents", desc:"+20% ALL rates", icon:"⚡"},
-  {cost:2000, bought:false, label:"Server Room", desc:"Unlock tier 5", icon:"🏢"},
-  {cost:10000, bought:false, label:"Research Lab", desc:"Unlock tier 6", icon:"🔬"},
-  {cost:200, bought:false, label:"Keyboard", desc:"+50% click power", icon:"⌨️", clickUpgrade:true},
+  { id:0, cost:500, bought:false, name:"Overclock", desc:"+20% ALL rates", icon:"⚡" },
+  { id:1, cost:2000, bought:false, name:"Server Room", desc:"Unlock Analytics", icon:"🏢" },
+  { id:2, cost:10000, bought:false, name:"Research Lab", desc:"Unlock CAIO", icon:"🔬" },
+  { id:3, cost:200, bought:false, name:"Keyboard", desc:"+50% click power", icon:"⌨️" },
 ];
 
-let achievements = [
-  {id:"click100", check: () => totalEarned >= 100, label:"100 Credits Earned"},
-  {id:"click1k", check: () => totalEarned >= 1000, label:"1K Credits Earned"},
-  {id:"click1m", check: () => totalEarned >= 1000000, label:"1M Credits Earned"},
-  {id:"agents5", check: () => agents.filter(a=>a.count>=5).length >= 3, label:"3 Agent Types (5+ each)"},
-  {id:"agents50", check: () => agents.reduce((s,a)=>s+a.count,0) >= 50, label:"50 Total Agents"},
-  {id:"upg3", check: () => upgrades.filter(u=>u.bought).length >= 3, label:"3 Upgrades Bought"},
-  {id:"prestige1", check: () => prestigePoints >= 1, label:"First Prestige"},
-  {id:"discord", check: () => false, label:"Join Discord (coming soon)"},
+let missions = [
+  { id:0, name:"Debug Squad", desc:"Own 5 Support Bots", reward:1000, check: () => agents[0].owned >= 5, done:false },
+  { id:1, name:"Email Overflow", desc:"Own 10 Email Agents", reward:3000, check: () => agents[1].owned >= 10, done:false },
+  { id:2, name:"Content Empire", desc:"Own 20 Content Workers", reward:10000, check: () => agents[2].owned >= 20, done:false },
+  { id:3, name:"Video Pipeline", desc:"Own 15 Video Editors", reward:20000, check: () => agents[3].owned >= 15, done:false },
+  { id:4, name:"Upgrade Hunter", desc:"Buy 2 upgrades", reward:5000, check: () => upgrades.filter(u=>u.bought).length >= 2, done:false },
+  { id:5, name:"First Prestige", desc:"Prestige once", reward:0, check: () => prestigePoints >= 1, done:false },
 ];
-let unlocked = new Set();
+
+let npcs = [
+  { x: 5*TILE, y: 4*TILE, name:"Dev", color:"#00d4ff", dialog: ["Welcome to Bot & Bank!","Walk to colored tiles to interact.","Press E near objects."] },
+  { x: 11*TILE, y: 2*TILE, name:"CEO", color:"#ff00ff", dialog: ["You're here to build, not browse.","Buy agents. Deploy them. Scale."] },
+  { x: 7*TILE, y: 10*TILE, name:"Ops", color:"#00ff99", dialog: ["Keep the servers cool.","Unlock new rooms by buying upgrades."] },
+];
+
+let interactables = [
+  { x: 4*TILE, y: 2*TILE, w: TILE, h: TILE, label: "Laptop", color: "#00d4ff", quest: 100, click: 1 },
+  { x: 12*TILE, y: 4*TILE, w: TILE, h: TILE, label: "Terminal", color: "#ff00ff", quest: 25 },
+  { x: 2*TILE, y: 8*TILE, w: TILE, h: TILE, label: "Server Rack", color: "#00ff99", auto: true },
+  { x: 6*TILE, y: 5*TILE, w: TILE, h: TILE, label: "Whiteboard", color: "#ffaa00", upgrade: true },
+  { x: 9*TILE, y: 9*TILE, w: TILE, h: TILE, label: "Coffee", color: "#ff4444", boost: 30 },
+];
+
+let particles = [];
+let screenShake = 0;
+
+// ==================== INPUT ====================
+window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; if (e.key.toLowerCase() === 'e') interact(); });
+window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (W / rect.width) + camera.x;
+  const my = (e.clientY - rect.top) * (H / rect.height) + camera.y;
+  // quick click near player = earn
+  const dx = mx - (player.x + TILE/2), dy = my - (player.y + TILE/2);
+  if (Math.sqrt(dx*dx+dy*dy) < TILE*2) earn();
+});
 
 // ==================== CORE ====================
 function recalc() {
   rate = 0;
-  agents.forEach((a, i) => {
-    rate += a.base * a.count * prestigeMultiplier;
-  });
+  agents.forEach(a => { rate += a.base * a.owned * prestigeMultiplier; });
   rate = Math.floor(rate);
 }
 
@@ -297,78 +150,28 @@ function format(n) {
   return Math.floor(n).toString();
 }
 
-function getCost(a) { return Math.floor(a.cost * Math.pow(1.15, a.count)); }
-
-function update() {
-  document.getElementById('credits').textContent = format(credits) + ' CREDITS';
-  document.getElementById('rate').textContent = format(rate) + ' / sec';
-  document.getElementById('pp').textContent = prestigePoints;
-  const ppRate = Math.floor(Math.sqrt(Math.max(totalEarned, 1)) / 1000);
-  document.getElementById('pp-rate').textContent = ppRate;
-  document.getElementById('prestige-btn').disabled = totalEarned < 50000;
-
-  // agents
-  const al = document.getElementById('agents-list');
-  al.innerHTML = agents.map((a, i) => {
-    if (a.locked) {
-      const lockedBy = ["","","","","Server Room","Research Lab"][i] || "";
-      return `<div class="agent"><div><div class="agent-name">🔒 ${a.icon} ${a.name}</div><div class="agent-cost">Unlock: ${lockedBy}</div></div></div>`;
-    }
-    const c = getCost(a);
-    return `<div class="agent">
-      <div>
-        <div class="agent-name">${a.icon} ${a.name}</div>
-        <div class="agent-extra">+${a.base}/sec each · Owned: ${a.count}</div>
-        <div class="agent-cost">COST: ${format(c)}</div>
-      </div>
-      <button class="buy-btn" ${credits < c ? 'disabled' : ''} onclick="buyAgent(${i})">BUY</button>
-    </div>`;
-  }).join('');
-
-  // upgrades
-  const ul = document.getElementById('upgrades-list');
-  ul.innerHTML = upgrades.map((u, i) => {
-    const c = Math.floor(u.cost * prestigeMultiplier);
-    if (u.bought) return `<div class="upgrade owned"><div><div class="agent-name">${u.icon} ${u.label}</div><div class="agent-cost">PURCHASED</div></div></div>`;
-    return `<div class="upgrade" onclick="buyUpgrade(${i})" style="color:${credits >= c ? '#00ff99' : '#888'}">
-      <div><div class="agent-name">${u.icon} ${u.label}</div><div class="agent-cost">${u.desc} — ${format(c)} CREDS</div></div>
-    </div>`;
-  }).join('');
-
-  // achievements
-  const acl = document.getElementById('achievements-list');
-  acl.innerHTML = achievements.map((a, i) => {
-    const unlocked = a.check();
-    if (unlocked && !document.getElementById('ach'+i)?.classList.contains('unlocked')) {
-      showToast('🏆 ' + a.label);
-    }
-    return `<div class="achieve ${unlocked ? 'unlocked' : ''}" id="ach${i}">${unlocked ? '✅' : '🔒'} ${a.label}</div>`;
-  }).join('');
-
-  document.getElementById('prestige-display').textContent = prestigeMultiplier > 1 ? `★ Prestige Bonus: ${((prestigeMultiplier-1)*100).toFixed(0)}%` : '';
-}
-
-function earn(e) {
-  let amt = 1 + Math.floor(rate * 0.1);
-  if (upgrades[3] && upgrades[3].bought) amt *= 2;
-  credits += amt;
-  totalEarned += amt;
-  if (e) spawnParticles(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
-  checkAchievements();
+function earn(amt = 1) {
+  const clickAmt = Math.max(1, Math.floor(1 + rate * 0.05)) * (upgrades[3]?.bought ? 2 : 1);
+  credits += clickAmt;
+  totalEarned += clickAmt;
+  screenShake = 3;
+  spawnParticles(player.x + TILE/2, player.y + TILE/2, 6);
+  updateHUD();
   recalc();
-  update();
+  checkMissions();
+  saveGame();
 }
 
 function buyAgent(i) {
   const a = agents[i];
-  const c = getCost(a);
-  if (credits < c) return;
+  const c = Math.floor(a.cost * Math.pow(1.15, a.owned));
+  if (credits < c || a.locked) return;
   credits -= c;
-  a.count++;
-  checkUnlocks();
-  recalc();
-  update();
-  saveGame();
+  a.owned++;
+  screenShake = 2;
+  spawnParticles(player.x + TILE/2, player.y + TILE/2, 10);
+  showToast('🚀 ' + a.name + ' hired!');
+  recalc(); updateHUD(); checkMissions(); saveGame();
 }
 
 function buyUpgrade(i) {
@@ -377,168 +180,219 @@ function buyUpgrade(i) {
   if (u.bought || credits < c) return;
   credits -= c;
   u.bought = true;
-  if (i === 0) multiplier *= 1.2;
   if (i === 1) agents[4].locked = false;
   if (i === 2) agents[5].locked = false;
-  showToast('🚀 ' + u.label + ' unlocked!');
-  recalc();
-  update();
-  saveGame();
+  showToast('⚡ ' + u.name + ' unlocked!');
+  screenShake = 4;
+  recalc(); updateHUD(); checkMissions(); saveGame();
 }
 
-function checkUnlocks() {
-  // upgrade[1] unlocks tier 5, upgrade[2] unlocks tier 6 - handled in buyUpgrade
-}
-
-function checkAchievements() {
-  achievements.forEach((_, i) => {
-    const el = document.getElementById('ach' + i);
-    if (el && achievements[i].check() && !el.classList.contains('unlocked')) {
-      el.classList.add('unlocked');
-      unlocked.add(i);
-      showToast('🏆 Achievement: ' + achievements[i].label);
+function interact() {
+  if (dialogOpen) { closeDialog(); return; }
+  for (const o of interactables) {
+    if (rectsOverlap(player.x, player.y, TILE, TILE, o.x, o.y, o.w, o.h)) {
+      if (o.quest) { earn(o.quest); showToast('+ ' + format(o.quest) + ' credits'); }
+      if (o.click) { earn(o.click); }
+      if (o.auto) { showToast('⚡ Bonus passive +5/sec for 30s'); setTimeout(() => {}, 30000); }
+      if (o.boost) { showToast('☕ Caffeine rush!'); }
+      if (o.upgrade) { showUpgradeMenu(); return; }
+      return;
     }
-  });
+  }
+  for (const n of npcs) {
+    const dx = player.x + TILE/2 - (n.x + TILE/2), dy = player.y + TILE/2 - (n.y + TILE/2);
+    if (Math.sqrt(dx*dx+dy*dy) < TILE*1.8) { openDialog(n.name, n.dialog); return; }
+  }
 }
 
-// ==================== PRESTIGE ====================
-function doPrestige() {
-  if (totalEarned < 50000) return;
-  const gain = Math.floor(Math.sqrt(totalEarned / 50000));
-  if (!confirm(`Prestige? Reset all progress for +${gain} Prestige Points. All rates increase by 25% per PP.`)) return;
-  prestigePoints += gain;
-  prestigeMultiplier = 1 + (prestigePoints * 0.25);
-  credits = 0; totalEarned = 0; rate = 0;
-  agents.forEach(a => { a.count = 0; });
-  upgrades.forEach(u => { u.bought = false; });
-  multiplier = 1;
-  showToast('⭐ Prestige! +' + gain + ' PP. Bonus: +' + ((prestigeMultiplier-1)*100).toFixed(0) + '%');
-  recalc();
-  update();
-  saveGame();
+function showUpgradeMenu() {
+  openDialog("Upgrades", upgrades.map((u,i) => u.bought ? u.name + ": BOUGHT" : u.name + " — " + format(Math.floor(u.cost * prestigeMultiplier)) + " creds").join('\n'));
 }
 
-// ==================== PERSISTENCE ====================
+function openDialog(title, lines) {
+  dialogOpen = true;
+  const d = document.getElementById('dialog');
+  d.innerHTML = '<div style="color:#00d4ff;font-weight:bold;margin-bottom:6px;">' + title + '</div>' + lines.join('<br>') + '<br><button onclick="closeDialog()">Close</button><button onclick="dismissAndBuy(event)">Buy</button>';
+  d.style.display = 'block';
+}
+
+window.dismissAndBuy = function(e) {
+  if (!dialogOpen) return;
+  const idx = Array.from(document.querySelectorAll('#dialog button')).indexOf(e.target) - 1;
+  closeDialog();
+  if (idx >= 0 && idx < upgrades.length) buyUpgrade(idx);
+};
+
+window.closeDialog = function() { dialogOpen = false; document.getElementById('dialog').style.display = 'none'; };
+
+function checkMissions() {
+  missions.forEach(m => { if (!m.done && m.check()) { m.done = true; showToast('🏆 Mission: ' + m.name); } });
+}
+
+function spawnParticles(x, y, n) {
+  for (let i = 0; i < n; i++) {
+    particles.push({ x, y, vx: (Math.random()-0.5)*4, vy: (Math.random()-0.5)*4, life:1, color: Math.random()<0.5?'#00d4ff':'#ff00ff', size: Math.random()*2+1 });
+  }
+}
+
+function showToast(msg) {
+  const d = document.getElementById('dialog');
+  d.innerHTML = msg + '<br><button onclick="closeDialog()">Close</button>';
+  d.style.display = 'block'; dialogOpen = true;
+  setTimeout(() => { if (dialogOpen) closeDialog(); }, 2500);
+}
+
+function rectsOverlap(x1,y1,w1,h1, x2,y2,w2,h2) {
+  return x1 < x2+w2 && x1+w1 > x2 && y1 < y2+h2 && y1+h1 > y2;
+}
+
 function saveGame() {
-  const data = {
-    credits, totalEarned, prestigePoints, prestigeMultiplier, multiplier,
-    agents, upgrades, unlocked, lastSave: Date.now()
-  };
-  try { localStorage.setItem('botandbank', JSON.stringify(data)); showToast('💾 Saved'); } catch(e) {}
+  const data = { credits, totalEarned, prestigePoints, prestigeMultiplier, agents, upgrades, missions, lastSave: Date.now() };
+  try { localStorage.setItem('botandbank2', JSON.stringify(data)); } catch(e) {}
 }
 
 function loadGame() {
   try {
-    const raw = localStorage.getItem('botandbank');
+    const raw = localStorage.getItem('botandbank2');
     if (!raw) return;
     const data = JSON.parse(raw);
-    credits = data.credits || 0;
-    totalEarned = data.totalEarned || 0;
-    prestigePoints = data.prestigePoints || 0;
-    prestigeMultiplier = data.prestigeMultiplier || 1;
-    multiplier = data.multiplier || 1;
+    credits = data.credits || 0; totalEarned = data.totalEarned || 0;
+    prestigePoints = data.prestigePoints || 0; prestigeMultiplier = data.prestigeMultiplier || 1;
     if (data.agents) data.agents.forEach((s,i) => { if (agents[i]) Object.assign(agents[i], s); });
     if (data.upgrades) data.upgrades.forEach((s,i) => { if (upgrades[i]) Object.assign(upgrades[i], s); });
-    if (data.unlocked) unlocked = new Set(data.unlocked);
-    // offline earnings
-    if (data.lastSave) {
-      const offlineSec = Math.min((Date.now() - data.lastSave) / 1000, 3600 * 8);
-      if (offlineSec > 10) {
-        recalc();
-        const offlineEarn = Math.floor(rate * offlineSec);
-        if (offlineEarn > 0) {
-          credits += offlineEarn;
-          totalEarned += offlineEarn;
-          showToast(`💤 Welcome back! Earned ${format(offlineEarn)} while away`);
-        }
-      }
-    }
+    if (data.missions) data.missions.forEach((s,i) => { if (missions[i]) Object.assign(missions[i], s); });
   } catch(e) {}
 }
 
-function shareProgress() {
-  const text = `🤖 Bot & Bank: AI Tycoon\nCredits: ${format(credits)}\nRate: ${format(rate)}/sec\nEmpire Value: ${format(totalEarned)}\nPlay: https://CyberFrogs.github.io/Bot-and-Bank/`;
-  navigator.clipboard.writeText(text).then(() => showToast('📋 Copied to clipboard!')).catch(() => showToast('Copy failed'));
+function updateHUD() {
+  document.getElementById('credits').textContent = format(credits) + ' CREDITS';
+  document.getElementById('rate').textContent = format(rate) + ' / sec';
+  document.getElementById('pp').textContent = prestigePoints;
+  let room = 'LOBBY';
+  for (const [k,v] of Object.entries(ROOMS)) {
+    const rx = k === 'S' ? 1 : MAP[0].indexOf(k);
+    if (rx >= 0 && player.x >= rx*TILE && player.x < (rx+8)*TILE) { room = v.name; break; }
+  }
+  document.getElementById('room').textContent = room;
 }
 
-function resetGame() {
-  if (!confirm('Reset all progress? This cannot be undone.')) return;
-  credits = 0; totalEarned = 0; rate = 0;
-  agents.forEach(a => { a.count = 0; a.locked = a.locked !== undefined ? a.locked : [false,false,false,false,true,true][agents.indexOf(a)]; });
-  upgrades.forEach(u => { u.bought = false; });
-  multiplier = 1; prestigeMultiplier = 1;
-  recalc(); update(); saveGame();
-  showToast('🔄 Progress reset');
+function updateQuests() {
+  const q = document.getElementById('quests');
+  q.innerHTML = '<div style="color:#00d4ff;margin-bottom:4px;">📜 QUESTS</div>' + missions.map(m => `<div class="quest ${m.done?'done':''}">${m.done?'✅':'🔒'} ${m.name}: ${m.desc}</div>`).join('');
 }
 
-function resetAll() {
-  if (!confirm('FULL WIPE: delete all save data including prestige?')) return;
-  localStorage.removeItem('botandbank');
-  location.reload();
-}
-
-// ==================== EFFECTS ====================
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.opacity = '1';
-  setTimeout(() => t.style.opacity = '0', 2000);
-}
-
-function spawnParticles(x, y) {
-  const canvas = document.getElementById('particles');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  for (let i = 0; i < 5; i++) {
-    const p = {
-      x, y,
-      vx: (Math.random() - 0.5) * 4,
-      vy: -Math.random() * 5 - 2,
-      life: 1,
-      color: Math.random() < 0.5 ? '#00d4ff' : '#ff00ff',
-      size: Math.random() * 3 + 1
-    };
-    particles.push(p);
+// ==================== RENDER ====================
+function drawMap() {
+  for (let y = 0; y < MAP.length; y++) {
+    for (let x = 0; x < MAP[y].length; x++) {
+      const ch = MAP[y][x], sx = x*TILE - camera.x, sy = y*TILE - camera.y;
+      if (ch === '#') {
+        ctx.fillStyle = '#002840'; ctx.fillRect(sx, sy, TILE, TILE);
+        ctx.strokeStyle = '#004466'; ctx.strokeRect(sx+2, sy+2, TILE-4, TILE-4);
+      } else if (ROOMS[ch]) {
+        ctx.fillStyle = ROOMS[ch].color; ctx.fillRect(sx, sy, TILE, TILE);
+        ctx.fillStyle = 'rgba(0,212,255,0.1)'; ctx.fillRect(sx, sy, TILE, 1); ctx.fillRect(sx, sy, 1, TILE);
+      } else {
+        ctx.fillStyle = '#0a1628'; ctx.fillRect(sx, sy, TILE, TILE);
+      }
+    }
   }
 }
 
-let particles = [];
-function animateParticles() {
-  const canvas = document.getElementById('particles');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawInteractables() {
+  interactables.forEach(o => {
+    const sx = o.x - camera.x, sy = o.y - camera.y;
+    ctx.fillStyle = o.color + '44'; ctx.fillRect(sx, sy, o.w, o.h);
+    ctx.strokeStyle = o.color; ctx.lineWidth = 1; ctx.strokeRect(sx+1, sy+1, o.w-2, o.h-2);
+    ctx.fillStyle = o.color; ctx.font = '9px Courier'; ctx.fillText(o.label, sx+2, sy-2);
+  });
+}
+
+function drawNPCs() {
+  npcs.forEach(n => {
+    const sx = n.x - camera.x, sy = n.y - camera.y;
+    ctx.fillStyle = n.color; ctx.fillRect(sx+4, sy+4, TILE-8, TILE-8);
+    ctx.fillStyle = '#fff'; ctx.font = '9px Courier'; ctx.fillText(n.name, sx-4, sy-6);
+  });
+}
+
+function drawPlayer() {
+  const sx = player.x - camera.x, sy = player.y - camera.y;
+  ctx.fillStyle = '#00d4ff'; ctx.fillRect(sx+6, sy+6, TILE-12, TILE-12);
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.strokeRect(sx+6, sy+6, TILE-12, TILE-12);
+  // direction indicator
+  const cx = sx + TILE/2 + player.dir.x*6, cy = sy + TILE/2 + player.dir.y*6;
+  ctx.fillStyle = '#fff'; ctx.fillRect(cx-2, cy-2, 4, 4);
+}
+
+function drawParticles() {
   for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vy += 0.15;
-    p.life -= 0.02;
+    const p = particles[i]; p.x += p.vx; p.y += p.vy; p.life -= 0.02;
     if (p.life <= 0) { particles.splice(i, 1); continue; }
-    ctx.globalAlpha = p.life;
-    ctx.fillStyle = p.color;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x - camera.x, p.y - camera.y, p.size, p.size);
   }
-  requestAnimationFrame(animateParticles);
+  ctx.globalAlpha = 1;
 }
-animateParticles();
+
+// ==================== LOOP ====================
+function update() {
+  const now = Date.now();
+  const dt = Math.min((now - lastTick) / 1000, 0.1);
+  lastTick = now;
+
+  if (!dialogOpen) {
+    let dx = 0, dy = 0;
+    if (keys['w'] || keys['arrowup']) dy = -1;
+    if (keys['s'] || keys['arrowdown']) dy = 1;
+    if (keys['a'] || keys['arrowleft']) dx = -1;
+    if (keys['d'] || keys['arrowright']) dx = 1;
+    if (dx !== 0 || dy !== 0) {
+      const len = Math.sqrt(dx*dx+dy*dy); dx /= len; dy /= len;
+      player.x += dx * player.speed; player.y += dy * player.speed;
+      player.dir = { x: dx, y: dy }; player.moving = true;
+    } else { player.moving = false; }
+    if (player.x < 0) player.x = 0; if (player.y < 0) player.y = 0;
+    if (player.x > MAP[0].length*TILE - TILE) player.x = MAP[0].length*TILE - TILE;
+    if (player.y > MAP.length*TILE - TILE) player.y = MAP.length*TILE - TILE;
+  }
+
+  // passive income
+  credits += rate * dt; totalEarned += rate * dt;
+
+  // camera
+  camera.x = player.x + TILE/2 - W/2 + camera.x*0.05;
+  camera.y = player.y + TILE/2 - H/2 + camera.y*0.05;
+  if (camera.x < 0) camera.x = 0; if (camera.y < 0) camera.y = 0;
+  const mx = MAP[0].length*TILE - W, my = MAP.length*TILE - H;
+  if (camera.x > mx && mx > 0) camera.x = mx; if (camera.y > my && my > 0) camera.y = my;
+
+  if (screenShake > 0) screenShake *= 0.9; if (screenShake < 0.1) screenShake = 0;
+}
+
+function draw() {
+  ctx.save();
+  if (screenShake) { ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake); }
+  ctx.fillStyle = '#05080f'; ctx.fillRect(0, 0, W, H);
+  drawMap();
+  drawInteractables();
+  drawNPCs();
+  drawParticles();
+  drawPlayer();
+  ctx.restore();
+}
+
+function loop() {
+  update(); draw(); updateHUD();
+  requestAnimationFrame(loop);
+}
 
 // ==================== INIT ====================
 loadGame();
 recalc();
-update();
-setInterval(() => {
-  credits += rate / 10;
-  totalEarned += rate / 10;
-  recalc();
-  update();
-}, 100);
-
-setInterval(saveGame, 30000);
+updateQuests();
+updateHUD();
+loop();
+setInterval(() => { recalc(); updateQuests(); saveGame(); }, 1000);
 </script>
 </body>
 </html>
