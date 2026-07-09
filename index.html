@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bot & Bank: AI Tycoon</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #05080f;
+    color: #e6f0ff;
+    font-family: 'Courier New', monospace;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  .container { max-width: 480px; margin: 0 auto; padding: 20px; }
+  h1 {
+    text-align: center;
+    color: #00d4ff;
+    font-size: 28px;
+    margin-bottom: 6px;
+    letter-spacing: 2px;
+  }
+  .sub {
+    text-align: center;
+    color: #ff00ff;
+    font-size: 12px;
+    margin-bottom: 20px;
+  }
+  .company {
+    background: linear-gradient(135deg, #001220, #002840);
+    border: 1px solid #00d4ff;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+  .company h2 { font-size: 16px; color: #aaa; letter-spacing: 1px; margin-bottom: 4px; }
+  .credits { font-size: 36px; color: #00ff99; font-weight: bold; }
+  .per-sec { font-size: 12px; color: #88aacc; margin-top: 4px; }
+  .click-btn {
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #00d4ff, #0077cc);
+    color: #000;
+    font-size: 22px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin: 16px 0;
+    border-radius: 8px;
+    letter-spacing: 1px;
+  }
+  .click-btn:active { background: linear-gradient(135deg, #0077cc, #0055aa); transform: scale(0.98); }
+  .agents {
+    background: rgba(0, 20, 40, 0.8);
+    border: 1px solid #003355;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+  .agent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #002840;
+  }
+  .agent:last-child { border: none; }
+  .agent-name { font-size: 13px; color: #aaccff; }
+  .agent-cost { color: #ffaa00; font-size: 12px; }
+  .buy-btn {
+    padding: 3px 10px;
+    background: #00d4ff;
+    color: #000;
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+  .buy-btn:disabled { background: #555; color: #888; cursor: not-allowed; }
+  .upgrades {
+    background: rgba(20, 0, 40, 0.8);
+    border: 1px solid #440088;
+    padding: 12px;
+    border-radius: 6px;
+  }
+  .upgrade {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #220044;
+    cursor: pointer;
+  }
+  .upgrade:last-child { border: none; }
+  .upgrade.owned { opacity: 0.5; }
+  .brand {
+    text-align: center;
+    color: #ff00ff;
+    font-size: 11px;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🤖 BOT & BANK</h1>
+  <div class="sub">@NeuralNetWorth // AI Tycoon</div>
+
+  <div class="company">
+    <h2>YOUR AI EMPIRE</h2>
+    <div class="credits" id="credits">0 CREDITS</div>
+    <div class="per-sec" id="rate">0 / sec</div>
+  </div>
+
+  <button class="click-btn" onclick="earn()">⚡ EARN CREDITS</button>
+
+  <div class="agents">
+    <div class="agent">
+      <div>
+        <div class="agent-name">💬 Support Bot</div>
+        <div class="agent-cost" id="cost0">+1 CREDITS/SEC — COST: 10</div>
+      </div>
+      <button class="buy-btn" id="btn0" onclick="buy(0)">BUY</button>
+    </div>
+    <div class="agent">
+      <div>
+        <div class="agent-name">📧 Email Agent</div>
+        <div class="agent-cost" id="cost1">+3 CREDITS/SEC — COST: 50</div>
+      </div>
+      <button class="buy-btn" id="btn1" onclick="buy(1)">BUY</button>
+    </div>
+    <div class="agent">
+      <div>
+        <div class="agent-name">📱 Content Worker</div>
+        <div class="agent-cost" id="cost2">+8 CREDITS/SEC — COST: 200</div>
+      </div>
+      <button class="buy-btn" id="btn2" onclick="buy(2)">BUY</button>
+    </div>
+    <div class="agent">
+      <div>
+        <div class="agent-name">🎬 Video Editor AI</div>
+        <div class="agent-cost" id="cost3">+20 CREDITS/SEC — COST: 1000</div>
+      </div>
+      <button class="buy-btn" id="btn3" onclick="buy(3)">BUY</button>
+    </div>
+  </div>
+
+  <div class="upgrades">
+    <div class="upgrade" id="upg0" onclick="buyUpgrade(0)">
+      <div>
+        <div class="agent-name">⚡ Overclock Agents</div>
+        <div class="agent-cost" id="upgcost0">+20% ALL RATES — 500 CREDS</div>
+      </div>
+    </div>
+    <div class="upgrade" id="upg1" onclick="buyUpgrade(1)">
+      <div>
+        <div class="agent-name">🏢 Open Server Room</div>
+        <div class="agent-cost" id="upgcost1">UNLOCK NEW AGENTS — 2000 CREDS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="brand">@NeuralNetWorth // Built by AI, Owned by You</div>
+</div>
+
+<script>
+let credits = 0;
+let rate = 0;
+let inventory = [0,0,0,0];
+let agents = [
+  {base:1, cost:10, name:"Support Bot"},
+  {base:3, cost:50, name:"Email Agent"},
+  {base:8, cost:200, name:"Content Worker"},
+  {base:20, cost:1000, name:"Video Editor AI"},
+];
+let upgrades = [
+  {cost:500, bought:false, label:"Overclock Agents"},
+  {cost:2000, bought:false, label:"Server Room"},
+];
+let multiplier = 1;
+
+function recalc() {
+  rate = 0;
+  agents.forEach((a, i) => {
+    rate += a.base * inventory[i] * multiplier;
+  });
+}
+
+function format(n) {
+  if (n >= 1e12) return (n/1e12).toFixed(1) + ' T';
+  if (n >= 1e9) return (n/1e9).toFixed(1) + ' B';
+  if (n >= 1e6) return (n/1e6).toFixed(1) + ' M';
+  if (n >= 1e3) return (n/1e3).toFixed(1) + ' K';
+  return Math.floor(n);
+}
+
+function update() {
+  document.getElementById('credits').textContent = format(credits) + ' CREDITS';
+  document.getElementById('rate').textContent = format(rate) + ' / sec';
+  agents.forEach((a, i) => {
+    const c = Math.floor(a.cost * Math.pow(1.15, inventory[i]));
+    document.getElementById('cost' + i).textContent =
+      `+${a.base} CREDS/SEC — COST: ${format(c)}`;
+    document.getElementById('btn' + i).disabled = credits < c;
+  });
+  upgrades.forEach((u, i) => {
+    document.getElementById('upg' + i).classList.toggle('owned', u.bought);
+    document.getElementById('upgcost' + i).textContent =
+      u.bought ? 'PURCHASED' : `${u.label} — ${format(u.cost)} CREDS`;
+    if (!u.bought) document.getElementById('upg' + i).style.color = credits >= u.cost ? '#00ff99' : '#888';
+  });
+}
+
+function earn() {
+  credits += 1 + Math.floor(rate * 0.1);
+  update();
+}
+
+function buy(i) {
+  const c = Math.floor(agents[i].cost * Math.pow(1.15, inventory[i]));
+  if (credits < c) return;
+  credits -= c;
+  inventory[i]++;
+  recalc();
+  update();
+}
+
+function buyUpgrade(i) {
+  if (upgrades[i].bought) return;
+  if (credits < upgrades[i].cost) return;
+  credits -= upgrades[i].cost;
+  if (i === 0) multiplier *= 1.2;
+  if (i === 1) {
+    agents.push({base:50, cost:5000, name:"Full AI Team"});
+    inventory.push(0);
+  }
+  upgrades[i].bought = true;
+  recalc();
+  update();
+}
+
+recalc();
+update();
+setInterval(() => { credits += rate/10; update(); }, 100);
+</script>
+</body>
+</html>
