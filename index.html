@@ -2,109 +2,197 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bot & Bank: AI Tycoon</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
-    background: #05080f;
+    background: radial-gradient(ellipse at top, #0a1628 0%, #05080f 60%);
     color: #e6f0ff;
     font-family: 'Courier New', monospace;
     overflow-x: hidden;
     min-height: 100vh;
   }
-  .container { max-width: 480px; margin: 0 auto; padding: 20px; }
+  .container { max-width: 480px; margin: 0 auto; padding: 16px; }
   h1 {
     text-align: center;
     color: #00d4ff;
-    font-size: 28px;
-    margin-bottom: 6px;
+    font-size: 26px;
+    margin-bottom: 4px;
     letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(0,212,255,0.5);
   }
   .sub {
     text-align: center;
     color: #ff00ff;
-    font-size: 12px;
-    margin-bottom: 20px;
+    font-size: 11px;
+    margin-bottom: 14px;
   }
   .company {
     background: linear-gradient(135deg, #001220, #002840);
     border: 1px solid #00d4ff;
-    padding: 24px;
+    padding: 20px;
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0,212,255,0.15);
   }
-  .company h2 { font-size: 16px; color: #aaa; letter-spacing: 1px; margin-bottom: 4px; }
-  .credits { font-size: 36px; color: #00ff99; font-weight: bold; }
-  .per-sec { font-size: 12px; color: #88aacc; margin-top: 4px; }
+  .company h2 { font-size: 12px; color: #7aaacc; letter-spacing: 2px; margin-bottom: 6px; }
+  .credits { font-size: 32px; color: #00ff99; font-weight: bold; }
+  .per-sec { font-size: 11px; color: #88aacc; margin-top: 4px; }
+  .prestige-info {
+    background: linear-gradient(135deg, #1a0030, #2d0050);
+    border: 1px solid #ff00ff;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 12px;
+  }
+  .prestige-info button {
+    background: linear-gradient(135deg, #ff00ff, #aa00aa);
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 8px;
+    font-size: 11px;
+  }
+  .prestige-info button:disabled {
+    background: #555;
+    color: #888;
+    cursor: not-allowed;
+  }
   .click-btn {
     width: 100%;
-    padding: 20px;
+    padding: 18px;
     background: linear-gradient(135deg, #00d4ff, #0077cc);
     color: #000;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: bold;
     border: none;
     cursor: pointer;
-    margin: 16px 0;
+    margin: 10px 0;
     border-radius: 8px;
-    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(0,212,255,0.3);
   }
-  .click-btn:active { background: linear-gradient(135deg, #0077cc, #0055aa); transform: scale(0.98); }
+  .click-btn:active { transform: scale(0.97); }
+  .sections { display: grid; gap: 8px; }
   .agents {
     background: rgba(0, 20, 40, 0.8);
     border: 1px solid #003355;
-    padding: 12px;
+    padding: 10px;
     border-radius: 6px;
-    margin-bottom: 8px;
+  }
+  .section-title {
+    color: #00d4ff;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
   }
   .agent {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0;
+    padding: 5px 0;
     border-bottom: 1px solid #002840;
   }
   .agent:last-child { border: none; }
-  .agent-name { font-size: 13px; color: #aaccff; }
-  .agent-cost { color: #ffaa00; font-size: 12px; }
+  .agent-name { font-size: 12px; color: #aaccff; }
+  .agent-extra { font-size: 10px; color: #6688aa; }
+  .agent-cost { color: #ffaa00; font-size: 10px; margin-top: 2px; }
   .buy-btn {
-    padding: 3px 10px;
+    padding: 4px 10px;
     background: #00d4ff;
     color: #000;
     border: none;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 10px;
     border-radius: 4px;
     font-weight: bold;
   }
-  .buy-btn:disabled { background: #555; color: #888; cursor: not-allowed; }
+  .buy-btn:disabled { background: #334455; color: #556677; cursor: not-allowed; }
   .upgrades {
     background: rgba(20, 0, 40, 0.8);
     border: 1px solid #440088;
-    padding: 12px;
+    padding: 10px;
     border-radius: 6px;
   }
   .upgrade {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0;
+    padding: 5px 0;
     border-bottom: 1px solid #220044;
     cursor: pointer;
   }
   .upgrade:last-child { border: none; }
-  .upgrade.owned { opacity: 0.5; }
+  .upgrade.owned { opacity: 0.4; cursor: default; }
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .action-btn {
+    padding: 8px;
+    background: rgba(0, 40, 60, 0.6);
+    border: 1px solid #004466;
+    color: #aaccff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: inherit;
+  }
+  .action-btn:hover { background: rgba(0, 60, 90, 0.8); }
+  .achievements {
+    background: rgba(30, 20, 0, 0.7);
+    border: 1px solid #664400;
+    padding: 10px;
+    border-radius: 6px;
+  }
+  .achieve {
+    font-size: 11px;
+    padding: 2px 0;
+    color: #887744;
+  }
+  .achieve.unlocked { color: #ffcc00; }
   .brand {
     text-align: center;
     color: #ff00ff;
+    font-size: 10px;
+    margin-top: 10px;
+  }
+  #particles {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .container { position: relative; z-index: 1; }
+  .toast {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 212, 255, 0.2);
+    border: 1px solid #00d4ff;
+    color: #00d4ff;
+    padding: 6px 14px;
+    border-radius: 4px;
     font-size: 11px;
-    margin-top: 12px;
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 0.5s;
   }
 </style>
 </head>
 <body>
+<canvas id="particles"></canvas>
 <div class="container">
   <h1>🤖 BOT & BANK</h1>
   <div class="sub">@NeuralNetWorth // AI Tycoon</div>
@@ -113,138 +201,344 @@
     <h2>YOUR AI EMPIRE</h2>
     <div class="credits" id="credits">0 CREDITS</div>
     <div class="per-sec" id="rate">0 / sec</div>
+    <div class="per-sec" id="prestige-display" style="color:#ff00ff;"></div>
   </div>
 
-  <button class="click-btn" onclick="earn()">⚡ EARN CREDITS</button>
+  <div class="prestige-info" id="prestige-box">
+    ⭐ Prestige Points: <span id="pp">0</span>
+    <span style="font-size:10px; color:#aaa;">(+<span id="pp-rate">0</span>/hr)</span><br>
+    <button id="prestige-btn" onclick="doPrestige()">⚡ PRESTIGE (+25% ALL)</button>
+  </div>
 
-  <div class="agents">
-    <div class="agent">
-      <div>
-        <div class="agent-name">💬 Support Bot</div>
-        <div class="agent-cost" id="cost0">+1 CREDITS/SEC — COST: 10</div>
-      </div>
-      <button class="buy-btn" id="btn0" onclick="buy(0)">BUY</button>
+  <button class="click-btn" onclick="earn(event)">⚡ EARN CREDITS</button>
+
+  <div class="sections">
+    <div class="agents">
+      <div class="section-title">🤖 Agents</div>
+      <div id="agents-list"></div>
     </div>
-    <div class="agent">
-      <div>
-        <div class="agent-name">📧 Email Agent</div>
-        <div class="agent-cost" id="cost1">+3 CREDITS/SEC — COST: 50</div>
-      </div>
-      <button class="buy-btn" id="btn1" onclick="buy(1)">BUY</button>
+
+    <div class="upgrades">
+      <div class="section-title">⚡ Upgrades</div>
+      <div id="upgrades-list"></div>
     </div>
-    <div class="agent">
-      <div>
-        <div class="agent-name">📱 Content Worker</div>
-        <div class="agent-cost" id="cost2">+8 CREDITS/SEC — COST: 200</div>
-      </div>
-      <button class="buy-btn" id="btn2" onclick="buy(2)">BUY</button>
-    </div>
-    <div class="agent">
-      <div>
-        <div class="agent-name">🎬 Video Editor AI</div>
-        <div class="agent-cost" id="cost3">+20 CREDITS/SEC — COST: 1000</div>
-      </div>
-      <button class="buy-btn" id="btn3" onclick="buy(3)">BUY</button>
+
+    <div class="achievements">
+      <div class="section-title">🏆 Achievements</div>
+      <div id="achievements-list"></div>
     </div>
   </div>
 
-  <div class="upgrades">
-    <div class="upgrade" id="upg0" onclick="buyUpgrade(0)">
-      <div>
-        <div class="agent-name">⚡ Overclock Agents</div>
-        <div class="agent-cost" id="upgcost0">+20% ALL RATES — 500 CREDS</div>
-      </div>
-    </div>
-    <div class="upgrade" id="upg1" onclick="buyUpgrade(1)">
-      <div>
-        <div class="agent-name">🏢 Open Server Room</div>
-        <div class="agent-cost" id="upgcost1">UNLOCK NEW AGENTS — 2000 CREDS</div>
-      </div>
-    </div>
+  <div class="actions">
+    <button class="action-btn" onclick="saveGame()">💾 Save</button>
+    <button class="action-btn" onclick="shareProgress()">📤 Share</button>
+    <button class="action-btn" onclick="resetGame()">🔄 Reset</button>
+    <button class="action-btn" onclick="resetAll()">⚠️ Full Wipe</button>
   </div>
 
   <div class="brand">@NeuralNetWorth // Built by AI, Owned by You</div>
 </div>
 
-<script>
-let credits = 0;
-let rate = 0;
-let inventory = [0,0,0,0];
-let agents = [
-  {base:1, cost:10, name:"Support Bot"},
-  {base:3, cost:50, name:"Email Agent"},
-  {base:8, cost:200, name:"Content Worker"},
-  {base:20, cost:1000, name:"Video Editor AI"},
-];
-let upgrades = [
-  {cost:500, bought:false, label:"Overclock Agents"},
-  {cost:2000, bought:false, label:"Server Room"},
-];
-let multiplier = 1;
+<div class="toast" id="toast" style="opacity:0;"></div>
 
+<script>
+// ==================== DATA ====================
+let credits = 0;
+let totalEarned = 0;
+let rate = 0;
+let multiplier = 1;
+let prestigePoints = 0;
+let prestigeMultiplier = 1;
+let lastSave = Date.now();
+
+let agents = [
+  {base:1, cost:10, name:"Support Bot", count:0, icon:"💬"},
+  {base:3, cost:50, name:"Email Agent", count:0, icon:"📧"},
+  {base:8, cost:200, name:"Content Worker", count:0, icon:"📱"},
+  {base:20, cost:1000, name:"Video Editor AI", count:0, icon:"🎬"},
+  {base:65, cost:5000, name:"Analytics Bot", count:0, icon:"📊", locked:true},
+  {base:300, cost:25000, name:"Chief AI Officer", count:0, icon:"🧠", locked:true},
+];
+
+let upgrades = [
+  {cost:500, bought:false, label:"Overclock Agents", desc:"+20% ALL rates", icon:"⚡"},
+  {cost:2000, bought:false, label:"Server Room", desc:"Unlock tier 5", icon:"🏢"},
+  {cost:10000, bought:false, label:"Research Lab", desc:"Unlock tier 6", icon:"🔬"},
+  {cost:200, bought:false, label:"Keyboard", desc:"+50% click power", icon:"⌨️", clickUpgrade:true},
+];
+
+let achievements = [
+  {id:"click100", check: () => totalEarned >= 100, label:"100 Credits Earned"},
+  {id:"click1k", check: () => totalEarned >= 1000, label:"1K Credits Earned"},
+  {id:"click1m", check: () => totalEarned >= 1000000, label:"1M Credits Earned"},
+  {id:"agents5", check: () => agents.filter(a=>a.count>=5).length >= 3, label:"3 Agent Types (5+ each)"},
+  {id:"agents50", check: () => agents.reduce((s,a)=>s+a.count,0) >= 50, label:"50 Total Agents"},
+  {id:"upg3", check: () => upgrades.filter(u=>u.bought).length >= 3, label:"3 Upgrades Bought"},
+  {id:"prestige1", check: () => prestigePoints >= 1, label:"First Prestige"},
+  {id:"discord", check: () => false, label:"Join Discord (coming soon)"},
+];
+let unlocked = new Set();
+
+// ==================== CORE ====================
 function recalc() {
   rate = 0;
   agents.forEach((a, i) => {
-    rate += a.base * inventory[i] * multiplier;
+    rate += a.base * a.count * prestigeMultiplier;
   });
+  rate = Math.floor(rate);
 }
 
 function format(n) {
+  if (n >= 1e15) return (n/1e15).toFixed(1) + ' Q';
   if (n >= 1e12) return (n/1e12).toFixed(1) + ' T';
   if (n >= 1e9) return (n/1e9).toFixed(1) + ' B';
   if (n >= 1e6) return (n/1e6).toFixed(1) + ' M';
   if (n >= 1e3) return (n/1e3).toFixed(1) + ' K';
-  return Math.floor(n);
+  return Math.floor(n).toString();
 }
+
+function getCost(a) { return Math.floor(a.cost * Math.pow(1.15, a.count)); }
 
 function update() {
   document.getElementById('credits').textContent = format(credits) + ' CREDITS';
   document.getElementById('rate').textContent = format(rate) + ' / sec';
-  agents.forEach((a, i) => {
-    const c = Math.floor(a.cost * Math.pow(1.15, inventory[i]));
-    document.getElementById('cost' + i).textContent =
-      `+${a.base} CREDS/SEC — COST: ${format(c)}`;
-    document.getElementById('btn' + i).disabled = credits < c;
-  });
-  upgrades.forEach((u, i) => {
-    document.getElementById('upg' + i).classList.toggle('owned', u.bought);
-    document.getElementById('upgcost' + i).textContent =
-      u.bought ? 'PURCHASED' : `${u.label} — ${format(u.cost)} CREDS`;
-    if (!u.bought) document.getElementById('upg' + i).style.color = credits >= u.cost ? '#00ff99' : '#888';
-  });
+  document.getElementById('pp').textContent = prestigePoints;
+  const ppRate = Math.floor(Math.sqrt(Math.max(totalEarned, 1)) / 1000);
+  document.getElementById('pp-rate').textContent = ppRate;
+  document.getElementById('prestige-btn').disabled = totalEarned < 50000;
+
+  // agents
+  const al = document.getElementById('agents-list');
+  al.innerHTML = agents.map((a, i) => {
+    if (a.locked) {
+      const lockedBy = ["","","","","Server Room","Research Lab"][i] || "";
+      return `<div class="agent"><div><div class="agent-name">🔒 ${a.icon} ${a.name}</div><div class="agent-cost">Unlock: ${lockedBy}</div></div></div>`;
+    }
+    const c = getCost(a);
+    return `<div class="agent">
+      <div>
+        <div class="agent-name">${a.icon} ${a.name}</div>
+        <div class="agent-extra">+${a.base}/sec each · Owned: ${a.count}</div>
+        <div class="agent-cost">COST: ${format(c)}</div>
+      </div>
+      <button class="buy-btn" ${credits < c ? 'disabled' : ''} onclick="buyAgent(${i})">BUY</button>
+    </div>`;
+  }).join('');
+
+  // upgrades
+  const ul = document.getElementById('upgrades-list');
+  ul.innerHTML = upgrades.map((u, i) => {
+    const c = Math.floor(u.cost * prestigeMultiplier);
+    if (u.bought) return `<div class="upgrade owned"><div><div class="agent-name">${u.icon} ${u.label}</div><div class="agent-cost">PURCHASED</div></div></div>`;
+    return `<div class="upgrade" onclick="buyUpgrade(${i})" style="color:${credits >= c ? '#00ff99' : '#888'}">
+      <div><div class="agent-name">${u.icon} ${u.label}</div><div class="agent-cost">${u.desc} — ${format(c)} CREDS</div></div>
+    </div>`;
+  }).join('');
+
+  // achievements
+  const acl = document.getElementById('achievements-list');
+  acl.innerHTML = achievements.map((a, i) => {
+    const unlocked = a.check();
+    if (unlocked && !document.getElementById('ach'+i)?.classList.contains('unlocked')) {
+      showToast('🏆 ' + a.label);
+    }
+    return `<div class="achieve ${unlocked ? 'unlocked' : ''}" id="ach${i}">${unlocked ? '✅' : '🔒'} ${a.label}</div>`;
+  }).join('');
+
+  document.getElementById('prestige-display').textContent = prestigeMultiplier > 1 ? `★ Prestige Bonus: ${((prestigeMultiplier-1)*100).toFixed(0)}%` : '';
 }
 
-function earn() {
-  credits += 1 + Math.floor(rate * 0.1);
-  update();
-}
-
-function buy(i) {
-  const c = Math.floor(agents[i].cost * Math.pow(1.15, inventory[i]));
-  if (credits < c) return;
-  credits -= c;
-  inventory[i]++;
+function earn(e) {
+  let amt = 1 + Math.floor(rate * 0.1);
+  if (upgrades[3] && upgrades[3].bought) amt *= 2;
+  credits += amt;
+  totalEarned += amt;
+  if (e) spawnParticles(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
+  checkAchievements();
   recalc();
   update();
+}
+
+function buyAgent(i) {
+  const a = agents[i];
+  const c = getCost(a);
+  if (credits < c) return;
+  credits -= c;
+  a.count++;
+  checkUnlocks();
+  recalc();
+  update();
+  saveGame();
 }
 
 function buyUpgrade(i) {
-  if (upgrades[i].bought) return;
-  if (credits < upgrades[i].cost) return;
-  credits -= upgrades[i].cost;
+  const u = upgrades[i];
+  const c = Math.floor(u.cost * prestigeMultiplier);
+  if (u.bought || credits < c) return;
+  credits -= c;
+  u.bought = true;
   if (i === 0) multiplier *= 1.2;
-  if (i === 1) {
-    agents.push({base:50, cost:5000, name:"Full AI Team"});
-    inventory.push(0);
-  }
-  upgrades[i].bought = true;
+  if (i === 1) agents[4].locked = false;
+  if (i === 2) agents[5].locked = false;
+  showToast('🚀 ' + u.label + ' unlocked!');
   recalc();
   update();
+  saveGame();
 }
 
+function checkUnlocks() {
+  // upgrade[1] unlocks tier 5, upgrade[2] unlocks tier 6 - handled in buyUpgrade
+}
+
+function checkAchievements() {
+  achievements.forEach((_, i) => {
+    const el = document.getElementById('ach' + i);
+    if (el && achievements[i].check() && !el.classList.contains('unlocked')) {
+      el.classList.add('unlocked');
+      unlocked.add(i);
+      showToast('🏆 Achievement: ' + achievements[i].label);
+    }
+  });
+}
+
+// ==================== PRESTIGE ====================
+function doPrestige() {
+  if (totalEarned < 50000) return;
+  const gain = Math.floor(Math.sqrt(totalEarned / 50000));
+  if (!confirm(`Prestige? Reset all progress for +${gain} Prestige Points. All rates increase by 25% per PP.`)) return;
+  prestigePoints += gain;
+  prestigeMultiplier = 1 + (prestigePoints * 0.25);
+  credits = 0; totalEarned = 0; rate = 0;
+  agents.forEach(a => { a.count = 0; });
+  upgrades.forEach(u => { u.bought = false; });
+  multiplier = 1;
+  showToast('⭐ Prestige! +' + gain + ' PP. Bonus: +' + ((prestigeMultiplier-1)*100).toFixed(0) + '%');
+  recalc();
+  update();
+  saveGame();
+}
+
+// ==================== PERSISTENCE ====================
+function saveGame() {
+  const data = {
+    credits, totalEarned, prestigePoints, prestigeMultiplier, multiplier,
+    agents, upgrades, unlocked, lastSave: Date.now()
+  };
+  try { localStorage.setItem('botandbank', JSON.stringify(data)); showToast('💾 Saved'); } catch(e) {}
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem('botandbank');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    credits = data.credits || 0;
+    totalEarned = data.totalEarned || 0;
+    prestigePoints = data.prestigePoints || 0;
+    prestigeMultiplier = data.prestigeMultiplier || 1;
+    multiplier = data.multiplier || 1;
+    if (data.agents) data.agents.forEach((s,i) => { if (agents[i]) Object.assign(agents[i], s); });
+    if (data.upgrades) data.upgrades.forEach((s,i) => { if (upgrades[i]) Object.assign(upgrades[i], s); });
+    if (data.unlocked) unlocked = new Set(data.unlocked);
+    // offline earnings
+    if (data.lastSave) {
+      const offlineSec = Math.min((Date.now() - data.lastSave) / 1000, 3600 * 8);
+      if (offlineSec > 10) {
+        recalc();
+        const offlineEarn = Math.floor(rate * offlineSec);
+        if (offlineEarn > 0) {
+          credits += offlineEarn;
+          totalEarned += offlineEarn;
+          showToast(`💤 Welcome back! Earned ${format(offlineEarn)} while away`);
+        }
+      }
+    }
+  } catch(e) {}
+}
+
+function shareProgress() {
+  const text = `🤖 Bot & Bank: AI Tycoon\nCredits: ${format(credits)}\nRate: ${format(rate)}/sec\nEmpire Value: ${format(totalEarned)}\nPlay: https://CyberFrogs.github.io/Bot-and-Bank/`;
+  navigator.clipboard.writeText(text).then(() => showToast('📋 Copied to clipboard!')).catch(() => showToast('Copy failed'));
+}
+
+function resetGame() {
+  if (!confirm('Reset all progress? This cannot be undone.')) return;
+  credits = 0; totalEarned = 0; rate = 0;
+  agents.forEach(a => { a.count = 0; a.locked = a.locked !== undefined ? a.locked : [false,false,false,false,true,true][agents.indexOf(a)]; });
+  upgrades.forEach(u => { u.bought = false; });
+  multiplier = 1; prestigeMultiplier = 1;
+  recalc(); update(); saveGame();
+  showToast('🔄 Progress reset');
+}
+
+function resetAll() {
+  if (!confirm('FULL WIPE: delete all save data including prestige?')) return;
+  localStorage.removeItem('botandbank');
+  location.reload();
+}
+
+// ==================== EFFECTS ====================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2000);
+}
+
+function spawnParticles(x, y) {
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  for (let i = 0; i < 5; i++) {
+    const p = {
+      x, y,
+      vx: (Math.random() - 0.5) * 4,
+      vy: -Math.random() * 5 - 2,
+      life: 1,
+      color: Math.random() < 0.5 ? '#00d4ff' : '#ff00ff',
+      size: Math.random() * 3 + 1
+    };
+    particles.push(p);
+  }
+}
+
+let particles = [];
+function animateParticles() {
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.15;
+    p.life -= 0.02;
+    if (p.life <= 0) { particles.splice(i, 1); continue; }
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ==================== INIT ====================
+loadGame();
 recalc();
 update();
-setInterval(() => { credits += rate/10; update(); }, 100);
+setInterval(() => {
+  credits += rate / 10;
+  totalEarned += rate / 10;
+  recalc();
+  update();
+}, 100);
+
+setInterval(saveGame, 30000);
 </script>
 </body>
 </html>
