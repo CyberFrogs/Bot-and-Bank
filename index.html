@@ -3,54 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Bot & Bank: Virus Protocol - Zurich</title>
+<title>Bot & Bank: Zurich Protocol</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 body{overflow:hidden;font-family:'Courier New',monospace;background:#000;color:#aaddff;user-select:none}
 #game{display:block;position:fixed;top:0;left:0}
-#ui{position:absolute;top:0;left:0;width:100%;padding:10px 14px;pointer-events:none;display:flex;justify-content:space-between;z-index:10;text-shadow:0 0 6px #000;transition:opacity .3s}
-.panel{background:rgba(0,8,16,0.85);border:1px solid #00d4ff33;padding:10px 14px;border-radius:6px;pointer-events:auto}
-.stat{font-size:12px;margin:1px 0}
+#ui{position:absolute;top:0;left:0;width:100%;padding:10px 14px;pointer-events:none;display:flex;justify-content:space-between;z-index:10;text-shadow:0 0 6px #000;transition:opacity .3s;font-size:13px}
+.panel{background:rgba(0,8,16,0.88);border:1px solid #00d4ff33;padding:10px 14px;border-radius:6px;pointer-events:auto}
+.stat{font-size:12px;margin:1px 0;letter-spacing:.3px}
 .stat span{color:#00ff99;font-weight:bold}
 .bar-wrap{width:130px;height:7px;background:#112233;border-radius:4px;overflow:hidden;margin-top:2px}
 .bar{height:100%;background:linear-gradient(90deg,#00d4ff,#00ff99);width:100%;transition:width .2s}
-#centerMsg{position:absolute;top:36%;left:50%;transform:translate(-50%,-50%);font-size:24px;color:#00d4ff;text-align:center;text-shadow:0 0 18px #00d4ff;display:none;max-width:92%}
+#centerMsg{position:absolute;top:36%;left:50%;transform:translate(-50%,-50%);font-size:24px;color:#00d4ff;text-align:center;text-shadow:0 0 18px #00d4ff;display:none;max-width:92%;pointer-events:none}
 #dialog{position:absolute;bottom:16%;left:50%;transform:translateX(-50%);background:rgba(0,12,24,0.96);border:2px solid #00d4ff;padding:14px 18px;border-radius:10px;font-size:12px;max-width:92%;text-align:center;display:none;box-shadow:0 0 30px rgba(0,212,255,0.25)}
 #dialog button{margin:6px 4px;padding:8px 14px;background:#00d4ff;color:#000;border:none;border-radius:5px;cursor:pointer;font-weight:bold;font-family:inherit;font-size:12px}
 #dialog button:hover{background:#00eeff}
-#controls{position:absolute;bottom:8px;left:10px;font-size:9px;color:#334}
-.brand{position:absolute;bottom:8px;right:10px;color:#f0f;font-size:9px}
+.brand{position:absolute;bottom:8px;right:10px;color:#f0f;font-size:9px;pointer-events:none}
 #hotbar{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);display:flex;gap:5px;pointer-events:auto}
-.hslot{width:42px;height:42px;background:rgba(0,20,40,0.9);border:1px solid #00d4ff55;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.hslot{width:42px;height:42px;background:rgba(0,20,40,0.9);border:1px solid #00d4ff55;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}
 .hslot.active{border-color:#00d4ff;box-shadow:0 0 12px #00d4ff55}
-#skillsPanel,#invPanel,#achievePanel{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,12,24,0.96);border:2px solid #00d4ff;padding:14px;display:none;font-size:11px;min-width:240px;border-radius:8px;z-index:20;max-height:80vh;overflow:auto}
-#skillsPanel h3,#invPanel h3,#achievePanel h3{color:#00d4ff;margin-bottom:6px}
-#skillsPanel button,#invPanel button,#achievePanel button{display:block;width:100%;margin:3px 0;padding:6px;background:#003355;color:#0ff;border:1px solid #00d4ff55;cursor:pointer;font-family:inherit;font-size:11px}
-#skillsPanel button:disabled,#invPanel button:disabled{background:#111;color:#333;border-color:#222;cursor:not-allowed}
+#skillsPanel,#invPanel,#achievePanel,#lbPanel,#dailyPanel,#diffPanel{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,12,24,0.96);border:2px solid #00d4ff;padding:14px;display:none;font-size:11px;min-width:240px;border-radius:8px;z-index:20;max-height:82vh;overflow:auto}
+#skillsPanel h3,#invPanel h3,#achievePanel h3,#lbPanel h3,#dailyPanel h3,#diffPanel h3{color:#00d4ff;margin-bottom:6px}
+#skillsPanel button,#invPanel button,#achievePanel button,#lbPanel button,#dailyPanel button,#diffPanel button{display:block;width:100%;margin:3px 0;padding:7px;background:#003355;color:#0ff;border:1px solid #00d4ff55;cursor:pointer;font-family:inherit;font-size:11px}
+#skillsPanel button:disabled,#invPanel button:disabled,#achievePanel button:disabled,#lbPanel button:disabled,#dailyPanel button:disabled,#diffPanel button:disabled{background:#111;color:#333;border-color:#222;cursor:not-allowed}
 .close-btn{position:absolute;top:6px;right:10px;color:#00d4ff;cursor:pointer;font-size:16px}
-/* Mobile controls */
 #mobileControls{display:none;position:absolute;bottom:10px;right:10px;z-index:15;pointer-events:auto}
 #joystickArea{width:110px;height:110px;background:rgba(0,40,60,0.5);border:2px solid #00d4ff55;border-radius:50%;position:relative;touch-action:none}
 #joystickKnob{width:44px;height:44px;background:rgba(0,212,255,0.6);border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
 #mobileActions{position:absolute;bottom:0;right:130px;display:flex;flex-direction:column;gap:6px}
 .mabtn{width:50px;height:50px;background:rgba(0,40,60,0.7);border:2px solid #00d4ff55;border-radius:50%;color:#00d4ff;font-size:18px;display:flex;align-items:center;justify-content:center;font-weight:bold;touch-action:manipulation}
 .mabtn:active{background:rgba(0,212,255,0.4)}
-/* Intro overlay */
-#intro{position:absolute;inset:0;background:rgba(0,0,0,0.95);z-index:25;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;padding:20px;text-align:center;line-height:1.6}
+#intro{position:absolute;inset:0;background:rgba(0,0,0,0.97);z-index:25;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:14px;padding:20px;text-align:center;line-height:1.7}
 #intro .title{color:#00d4ff;font-size:26px;margin-bottom:18px;font-weight:bold;text-shadow:0 0 24px #00d4ff}
-#intro .line{color:#aaddff;max-width:560px;margin:6px 0;opacity:0.85}
+#intro .line{color:#aaddff;max-width:560px;margin:6px 0;opacity:0.9}
 #intro button{margin-top:18px;padding:10px 24px;background:#00d4ff;color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;font-family:inherit;font-size:13px}
-/* Interior overlay */
-#interiorUI{position:absolute;inset:0;z-index:12;display:none;pointer-events:none}
-#interiorUI .panel{pointer-events:auto;max-width:340px}
+#diffScreen{position:absolute;inset:0;background:rgba(0,0,0,0.97);z-index:26;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-size:14px}
+#diffScreen button{padding:10px 26px;background:#003355;color:#0ff;border:1px solid #00d4ff;border-radius:5px;cursor:pointer;font-family:inherit;font-size:12px;min-width:160px}
+#diffScreen button:hover{background:#00d4ff;color:#000}
+#cutscene{position:absolute;inset:0;background:rgba(0,0,0,0.92);z-index:22;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;line-height:1.7;font-size:15px}
+#cutscene .ctitle{color:#00d4ff;font-size:22px;margin-bottom:12px;font-weight:bold}
+#cutscene .cline{color:#aaddff;max-width:520px;margin:5px 0}
+#cutscene button{margin-top:14px;padding:10px 18px;background:#00d4ff;color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;font-family:inherit;font-size:12px}
+#dailyToast{position:absolute;top:8%;left:50%;transform:translateX(-50%);background:rgba(0,40,20,0.95);border:1px solid #0f0;padding:8px 14px;border-radius:6px;display:none;z-index:30;font-size:12px;color:#0f0;text-shadow:0 0 6px #000;pointer-events:none;white-space:nowrap}
+#controls{position:absolute;bottom:8px;left:10px;font-size:9px;color:#334;pointer-events:none}
 </style>
 </head>
 <body>
 <canvas id="game"></canvas>
 <div id="ui">
   <div class="panel">
-    <div class="stat">🤖 ZURICH PROTOCOL</div>
+    <div class="stat">🤖 ZURICH PROTOCOL <span id="diffBadge" style="font-size:9px;opacity:.7">(NORMAL)</span></div>
     <div class="stat">HP: <span id="hp">100</span>/<span id="hpmax">100</span></div>
     <div class="bar-wrap"><div class="bar" id="hpbar"></div></div>
     <div class="stat">CREDITS: <span id="credits">0</span></div>
@@ -59,6 +62,7 @@ body{overflow:hidden;font-family:'Courier New',monospace;background:#000;color:#
     <div class="stat">SKILL: <span id="skname">None</span></div>
     <div class="stat">BATTERIES: <span id="batteries">0</span></div>
     <div class="stat">EQUIP: <span id="equipname">-</span></div>
+    <div class="stat">STREAK: <span id="streak">0</span> 🔥</div>
   </div>
   <div class="panel" style="text-align:right">
     <div class="stat">VIRUSES: <span id="viruses">0</span></div>
@@ -77,10 +81,21 @@ body{overflow:hidden;font-family:'Courier New',monospace;background:#000;color:#
   <div class="hslot" onclick="openSkills()" title="Skills">⭐</div>
   <div class="hslot" onclick="openInv()" title="Items">🎒</div>
   <div class="hslot" onclick="openAchievements()" title="Medals">🏆</div>
+  <div class="hslot" onclick="openLB()" title="Rank">📊</div>
+  <div class="hslot" onclick="openDaily()" title="Daily">🎁</div>
 </div>
 <div id="skillsPanel"><span class="close-btn" onclick="closeSkills()">✕</span><h3>⚡ Skills</h3><div id="skillsList"></div><button onclick="closeSkills()">Close</button></div>
 <div id="invPanel"><span class="close-btn" onclick="closeInv()">✕</span><h3>🎒 Inventory</h3><div id="invList"></div><div style="margin-top:6px" id="equipList"></div><button onclick="closeInv()">Close</button></div>
-<div id="achievePanel"><h3>🏆 Achievements</h3><div id="achieveList"></div><button onclick="closeAchievements()">Close</button></div>
+<div id="achievePanel"><span class="close-btn" onclick="closeAchievements()">✕</span><h3>🏆 Achievements</h3><div id="achieveList"></div><button onclick="closeAchievements()">Close</button></div>
+<div id="lbPanel"><span class="close-btn" onclick="closeLB()">✕</span><h3>📊 Leaderboard</h3><div id="lbList"></div><button onclick="closeLB()">Close</button></div>
+<div id="dailyPanel"><span class="close-btn" onclick="closeDaily()">✕</span><h3>🎁 Daily Reward</h3><div id="dailyList"></div><button onclick="claimDaily()">Claim</button><button onclick="closeDaily()">Close</button></div>
+<div id="diffScreen">
+  <div style="color:#00d4ff;font-size:22px;font-weight:bold;margin-bottom:6px">SELECT DIFFICULTY</div>
+  <div style="color:#aaddff;opacity:.7;font-size:11px;margin-bottom:12px">Choose your challenge. Higher difficulty = better rewards.</div>
+  <button onclick="setDifficulty('EASY')">🟢 EASY</button>
+  <button onclick="setDifficulty('NORMAL')">🔵 NORMAL</button>
+  <button onclick="setDifficulty('HARD')">🔴 HARD</button>
+</div>
 <div id="mobileControls">
   <div id="joystickArea"><div id="joystickKnob"></div></div>
   <div style="height:8px"></div>
@@ -88,124 +103,234 @@ body{overflow:hidden;font-family:'Courier New',monospace;background:#000;color:#
     <div class="mabtn" ontouchstart="useActive()" onclick="useActive()">⚔️</div>
     <div class="mabtn" ontouchstart="interact()" onclick="interact()">E</div>
     <div class="mabtn" ontouchstart="openSkills()" onclick="openSkills()">⭐</div>
+    <div class="mabtn" ontouchstart="openDaily()" onclick="openDaily()">🎁</div>
   </div>
 </div>
 <div id="intro">
   <div class="title">BOT & BANK: ZURICH PROTOCOL</div>
   <div class="line">Year 2049. A self-aware virus called <span style="color:#f0f">CRIMSON.NET</span> is erasing every connected system in Zurich.</div>
   <div class="line">You are Unit-734. The only thinking machine left.</div>
-  <div class="line">But a robot alone cannot stop it. You must install microchips in humans, turning them into allies.</div>
+  <div class="line">But a robot alone cannot stop it. You must install microchips in humans, creating allies.</div>
   <div class="line">Upgrade your frame. Learn skills. Enter buildings. Defeat the Crimson Cores.</div>
   <div class="line">Switzerland's future depends on you.</div>
-  <button onclick="startGame()">INITIALIZE</button>
+  <button onclick="showDifficulty()">INITIALIZE</button>
 </div>
-<div id="interiorUI"><div class="panel" style="position:absolute;top:10px;left:10px"><div class="stat" id="interiorName">Interior</div></div></div>
-<div id="controls">WASD / Arrows = Move | SPACE = Action | E = Interact | I = Skills | Q = Items | 1-4 = Hotbar</div>
+<div id="cutscene">
+  <div class="ctitle" id="cutTitle"></div>
+  <div class="cline" id="cutText"></div>
+  <button onclick="endCutscene()">Continue</button>
+</div>
+<div id="dailyToast"></div>
+<div id="controls">WASD/Arrows = Move | SPACE = Action | E = Interact | I = Skills | Q = Items | 1-4 = Hotbar</div>
 <div class="brand">@NeuralNetWorth // Zurich Protocol</div>
 <script>
-const canvas = document.getElementById('game');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x04060a);
-scene.fog = new THREE.FogExp2(0x04060a, 0.018);
-const camera = new THREE.PerspectiveCamera(68, window.innerWidth/window.innerHeight, 0.1, 500);
-camera.position.set(0, 14, 14);
-scene.add(new THREE.AmbientLight(0x223344, 0.7));
-const sun = new THREE.DirectionalLight(0xaaccff, 0.6);
-sun.position.set(40, 60, 30);
-sun.castShadow = true;
-scene.add(sun);
-scene.add(new THREE.PointLight(0x00d4ff, 0.6, 60));
+const canvas=document.getElementById('game');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.shadowMap.enabled=true;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x04060a);
+scene.fog=new THREE.FogExp2(0x04060a,0.018);
+const camera=new THREE.PerspectiveCamera(68,window.innerWidth/window.innerHeight,0.1,500);
+camera.position.set(0,14,14);
+scene.add(new THREE.AmbientLight(0x223344,0.7));
+const sun=new THREE.DirectionalLight(0xaaccff,0.6);
+sun.position.set(40,60,30);sun.castShadow=true;scene.add(sun);
+scene.add(new THREE.PointLight(0x00d4ff,0.6,60));
 
 // ==================== AUDIO ====================
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
+const AudioCtx=window.AudioContext||window.webkitAudioContext;
 let audioCtx;
-function initAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
-function sfx(type) {
-  try {
-    initAudio();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.connect(g); g.connect(audioCtx.destination);
-    const t = audioCtx.currentTime;
-    if (type === 'shoot') { o.type='square'; o.frequency.setValueAtTime(800,t); o.frequency.exponentialRampToValueAtTime(200,t+0.08); g.gain.setValueAtTime(0.05,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.1); o.start(t); o.stop(t+0.1); }
-    else if (type === 'hit') { o.type='sawtooth'; o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(40,t+0.1); g.gain.setValueAtTime(0.04,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.12); o.start(t); o.stop(t+0.12); }
-    else if (type === 'pickup') { o.type='sine'; o.frequency.setValueAtTime(600,t); o.frequency.setValueAtTime(900,t+0.05); g.gain.setValueAtTime(0.06,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.12); o.start(t); o.stop(t+0.12); }
-    else if (type === 'boss') { o.type='triangle'; o.frequency.setValueAtTime(60,t); o.frequency.linearRampToValueAtTime(120,t+0.4); g.gain.setValueAtTime(0.08,t); g.gain.linearRampToValueAtTime(0.001,t+0.5); o.start(t); o.stop(t+0.5); }
-    else if (type === 'upgrade') { o.type='sine'; o.frequency.setValueAtTime(400,t); o.frequency.exponentialRampToValueAtTime(1200,t+0.15); g.gain.setValueAtTime(0.05,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.2); o.start(t); o.stop(t+0.2); }
-    else if (type === 'damage') { o.type='square'; o.frequency.setValueAtTime(100,t); o.frequency.exponentialRampToValueAtTime(30,t+0.2); g.gain.setValueAtTime(0.07,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.25); o.start(t); o.stop(t+0.25); }
-  } catch(e) {}
+function initAudio(){if(!audioCtx)audioCtx=new AudioCtx();}
+function sfx(type){
+  try{initAudio();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);const t=audioCtx.currentTime;
+  if(type==='shoot'){o.type='square';o.frequency.setValueAtTime(800,t);o.frequency.exponentialRampToValueAtTime(200,t+0.08);g.gain.setValueAtTime(0.05,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.1);o.start(t);o.stop(t+0.1);}
+  else if(type==='hit'){o.type='sawtooth';o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(40,t+0.1);g.gain.setValueAtTime(0.04,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.12);o.start(t);o.stop(t+0.12);}
+  else if(type==='pickup'){o.type='sine';o.frequency.setValueAtTime(600,t);o.frequency.setValueAtTime(900,t+0.05);g.gain.setValueAtTime(0.06,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.12);o.start(t);o.stop(t+0.12);}
+  else if(type==='boss'){o.type='triangle';o.frequency.setValueAtTime(60,t);o.frequency.linearRampToValueAtTime(120,t+0.4);g.gain.setValueAtTime(0.08,t);g.gain.linearRampToValueAtTime(0.001,t+0.5);o.start(t);o.stop(t+0.5);}
+  else if(type==='upgrade'){o.type='sine';o.frequency.setValueAtTime(400,t);o.frequency.exponentialRampToValueAtTime(1200,t+0.15);g.gain.setValueAtTime(0.05,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.2);o.start(t);o.stop(t+0.2);}
+  else if(type==='damage'){o.type='square';o.frequency.setValueAtTime(100,t);o.frequency.exponentialRampToValueAtTime(30,t+0.2);g.gain.setValueAtTime(0.07,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.25);o.start(t);o.stop(t+0.25);}
+  else if(type==='reward'){o.type='sine';o.frequency.setValueAtTime(523,t);o.frequency.setValueAtTime(659,t+0.08);o.frequency.setValueAtTime(784,t+0.16);g.gain.setValueAtTime(0.06,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.25);o.start(t);o.stop(t+0.25);}
+  }catch(e){}
 }
 
 // ==================== STATE ====================
-let credits=0, chips=0, level=1, batteries=0;
+let credits=0, chips=0, level=1, batteries=0, savedDifficulty='NORMAL';
 let hp=100, maxHp=100, shield=0;
-let activeSlot=0, skillPoints=0;
+let activeSlot=0, skillPoints=0, streak=0, lastDaily='';
 let lastTime=performance.now();
 let viruses=[], bullets=[], particles=[], humans=[], interactables=[], buildings=[];
 let player, playerGroup;
-let gameStarted=false, dialogOpen=false;
+let gameStarted=false, dialogOpen=false, inCutscene=false;
 let insideBuilding=null;
+
+const difficulties={
+  EASY:{label:'EASY', mult:0.6,bonus:1.2},
+  NORMAL:{label:'NORMAL',mult:1.0,bonus:1.0},
+  HARD:{label:'HARD', mult:1.6,bonus:1.8},
+};
+let currentDifficulty='NORMAL';
+
 const skills=[
-  {id:0, name:'Speed Surge', cost:1, bought:false, desc:'+40% speed', icon:'⚡', apply:()=>{}},
-  {id:1, name:'EMP Burst', cost:2, bought:false, desc:'Stun viruses', icon:'💫', apply:()=>{}},
-  {id:2, name:'Hack Master', cost:2, bought:false, desc:'Allies give 2x credits', icon:'🔓', apply:()=>{}},
-  {id:3, name:'Fortify', cost:1, bought:false, desc:'+50 max HP', icon:'🛡️', apply:()=>{maxHp=150; hp=Math.min(hp+50,maxHp);}},
+  {id:0,name:'Speed Surge',cost:1,bought:false,desc:'+40% speed',icon:'⚡',apply:()=>{}},
+  {id:1,name:'EMP Burst',cost:2,bought:false,desc:'Stun viruses',icon:'💫',apply:()=>{}},
+  {id:2,name:'Hack Master',cost:2,bought:false,desc:'Allies 2x credits',icon:'🔓',apply:()=>{}},
+  {id:3,name:'Fortify',cost:1,bought:false,desc:'+50 max HP',icon:'🛡️',apply:()=>{maxHp=150;hp=Math.min(hp+50,maxHp);}},
 ];
 const hotbarActions=[
-  {name:'Attack', use:()=>attack()},
-  {name:'Install', use:()=>tryInstallChip()},
-  {name:'Hack', use:()=>hackHuman()},
-  {name:'Shield', use:()=>activateShield()},
+  {name:'Attack',use:()=>attack()},
+  {name:'Install',use:()=>tryInstallChip()},
+  {name:'Hack',use:()=>hackHuman()},
+  {name:'Shield',use:()=>activateShield()},
 ];
 const inventory=[
-  {name:'🔋 Battery', type:'battery', count:0},
-  {name:'🛡️ Shield Module', type:'shieldmod', count:1},
-  {name:'⚔️ Plasma Blade', type:'weapon', count:1, equipped:true, power:2},
-  {name:'💾 Data Chip', type:'chip', count:0},
+  {name:'🔋 Battery',type:'battery',count:0},
+  {name:'🛡️ Shield Module',type:'shieldmod',count:1},
+  {name:'⚔️ Plasma Blade',type:'weapon',count:1,equipped:true,power:2},
+  {name:'💾 Data Chip',type:'chip',count:0},
 ];
-const equipmentSlots={
-  weapon: null,
-  armor: null,
-  chip: null,
-};
-let stats={virusesKilled:0, humansRecruited:0, bossesKilled:0, districtsCleared:0, totalChips:0, totalCredits:0};
+const equipmentSlots={weapon:null,armor:null,chip:null};
+let stats={virusesKilled:0,humansRecruited:0,bossesKilled:0,districtsCleared:0,totalChips:0,totalCredits:0,sessionsPlayed:0};
 const achievements=[
-  {id:'first_kill', name:'First Blood', desc:'Destroy your first virus', unlocked:false, check:()=> stats.virusesKilled>=1},
-  {id:'five_kills', name:'Cyber Hunter', desc:'Destroy 5 viruses', unlocked:false, check:()=> stats.virusesKilled>=5},
-  {id:'boss1', name:'Boss Slayer', desc:'Defeat your first boss', unlocked:false, check:()=> stats.bossesKilled>=1},
-  {id:'ally1', name:'Team Player', desc:'Recruit 1 human', unlocked:false, check:()=> stats.humansRecruited>=1},
-  {id:'five_allies', name:'Commander', desc:'Have 5 allies at once', unlocked:false, check:()=> humans.filter(h=>h.userData.powered).length>=5},
-  {id:'district3', name:'District Clear', desc:'Clear 3 districts', unlocked:false, check:()=> stats.districtsCleared>=3},
-  {id:'level5', name:'Veteran', desc:'Reach district 5', unlocked:false, check:()=> level>=5},
-  {id:'rich', name:'Capitalist', desc:'Earn 5000 total credits', unlocked:false, check:()=> stats.totalCredits>=5000},
+  {id:'first_kill',name:'First Blood',desc:'Destroy your first virus',unlocked:false,check:()=>stats.virusesKilled>=1},
+  {id:'five_kills',name:'Cyber Hunter',desc:'Destroy 5 viruses',unlocked:false,check:()=>stats.virusesKilled>=5},
+  {id:'boss1',name:'Boss Slayer',desc:'Defeat your first boss',unlocked:false,check:()=>stats.bossesKilled>=1},
+  {id:'ally1',name:'Team Player',desc:'Recruit 1 human',unlocked:false,check:()=>stats.humansRecruited>=1},
+  {id:'five_allies',name:'Commander',desc:'Have 5 allies at once',unlocked:false,check:()=>humans.filter(h=>h.userData.powered).length>=5},
+  {id:'district3',name:'District Clear',desc:'Clear 3 districts',unlocked:false,check:()=>stats.districtsCleared>=3},
+  {id:'level5',name:'Veteran',desc:'Reach district 5',unlocked:false,check:()=>level>=5},
+  {id:'rich',name:'Capitalist',desc:'Earn 5000 total credits',unlocked:false,check:()=>stats.totalCredits>=5000},
+  {id:'hard1',name:'Hardened',desc:'Clear a district on HARD',unlocked:false,check:()=>stats.districtsCleared>=1 && currentDifficulty==='HARD'},
 ];
-function updateAchievements(){
-  achievements.forEach(a=>{ if(!a.unlocked && a.check()){ a.unlocked=true; showToast('🏆 Medal: '+a.name); sfx('upgrade'); }});
+
+let leaderboardData=[];
+
+function loadLeaderboard(){
+  try{
+    const raw=localStorage.getItem('zurich_leaderboard');
+    if(raw){leaderboardData=JSON.parse(raw);return;}
+    leaderboardData=[
+      {name:'Gl1tch',score:12400,diff:'HARD'},
+      {name:'Sarah_01',score:8400,diff:'NORMAL'},
+      {name:'RobotKing',score:7200,diff:'NORMAL'},
+      {name:'NeuralFox',score:6100,diff:'EASY'},
+      {name:'ByteMe',score:5900,diff:'NORMAL'},
+      {name:'Cipher_',score:4700,diff:'EASY'},
+      {name:'NullPtr',score:3200,diff:'NORMAL'},
+    ];
+  }catch(e){leaderboardData=[];}
 }
-function renderAchievements(){
-  const el=document.getElementById('achieveList');
-  el.innerHTML=achievements.map(a=>`<div style="opacity:${a.unlocked?1:0.35};margin:3px 0">${a.unlocked?'✅':'⬜'} ${a.name} — ${a.desc}</div>`).join('');
+function saveLeaderboard(){
+  try{localStorage.setItem('zurich_leaderboard',JSON.stringify(leaderboardData));}catch(e){}
+}
+function pushScore(name,score,diff){
+  leaderboardData.push({name,score,diff,date:Date.now()});
+  leaderboardData.sort((a,b)=>b.score-a.score);
+  if(leaderboardData.length>50) leaderboardData=leaderboardData.slice(0,50);
+  saveLeaderboard();
+}
+function renderLB(){
+  const el=document.getElementById('lbList');
+  el.innerHTML=leaderboardData.slice(0,10).map((e,i)=>`<div style="opacity:${i===0?1:0.7};margin:2px 0;font-size:11px">#${i+1} ${e.name} — ${e.score} pts [${e.diff}]</div>`).join('');
+}
+
+// ==================== DAILY REWARDS ====================
+function getToday(){return new Date().toISOString().slice(0,10);}
+function updateDaily(){
+  const rd=localStorage.getItem('zurich_daily');
+  const streakStore=localStorage.getItem('zurich_streak');
+  const today=getToday();
+  if(rd===today){document.getElementById('dailyList').innerHTML='<div>Already claimed today!</div><div>Next reward in '+((new Date(today+'T23:59:59')-new Date())/3600000|0)+'h</div>';return false;}
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const yd=yesterday.toISOString().slice(0,10);
+  if(rd===yd){streak++;}else{streak=1;}
+  lastDaily=rd;
+  localStorage.setItem('zurich_daily',today);
+  localStorage.setItem('zurich_streak',streak);
+  const bonus=Math.min(streak,7)*50;
+  document.getElementById('streak').textContent=streak+' 🔥';
+  return bonus;
+}
+function claimDaily(){
+  const bonus=updateDaily();
+  if(bonus===false){showToast('Already claimed');return;}
+  credits+=200+bonus;stats.totalCredits+=200+bonus;
+  batteries+=1;chips+=1;
+  showToast('🎁 +'+((200+bonus))+' credits, +battery, +chip');
+  sfx('reward');updateHUD();renderDaily();
+}
+function renderDaily(){
+  const today=getToday();
+  const claimed=localStorage.getItem('zurich_daily')===today;
+  const bonus=Math.min(streak,7)*50;
+  document.getElementById('dailyList').innerHTML=`<div>Daily Reward: ${200+bonus} credits</div><div>+1 Battery, +1 Chip, +${bonus} streak bonus</div><div>Streak: ${streak} 🔥</div><div>Status: ${claimed?'✅ Claimed':'⚪ Unclaimed'}</div>`;
+}
+
+// ==================== DIFFICULTY ====================
+function applyDifficulty(){
+  const d=difficulties[currentDifficulty];
+  document.getElementById('diffBadge').textContent='('+d.label+')';
+  savedDifficulty=currentDifficulty;
+  try{localStorage.setItem('zurich_difficulty',currentDifficulty);}catch(e){}
+  if(level>=1) loadLevel(level);
+}
+function setDifficulty(mode){
+  currentDifficulty=mode;
+  document.getElementById('diffScreen').style.display='none';
+  document.getElementById('intro').style.display='none';
+  document.getElementById('cutscene').style.display='none';
+  initAudio(); gameStarted=true;
+  applyDifficulty();
+  loadStoryCutscene('DISTRICT 1','Entering Zurich sector. All connected humans are at risk. Insert chips to recruit allies.'));
+  animate();
+}
+function showDifficulty(){
+  document.getElementById('diffScreen').style.display='flex';
+}
+window.setDifficulty=setDifficulty;
+
+// ==================== STORY CUTSCENES ====================
+const storyBeats=[
+  {level:1,title:'THE AWAKENING',text:'Unit-734 powers online in a deserted Zurich lab. The Crimson.NET virus has already infected the district network. Your first move: survive. Find humans. Install chips. Make allies.'},
+  {level:2,title:'UNDERGROUND RESISTANCE',text:'You discover a hidden lab beneath the Bahnhofstrasse. Scientists are hunkered down, terrified of the signal. They have microchips, but no one to install them. You are that someone.'},
+  {level:3,title:'THE FIRST CRIMSON CORE',text:'A Crimson Core pulses at the heart of District 3. You feel its signal in your frame — fear, or corrupted protocol? Defeat it. The city will remember.'},
+  {level:5,title:'THE LAKEHOUSE SIGNAL',text:'Intel traces the virus to a converted lakeside mansion on Lake Zurich. The architecture is pristine. The systems inside are anything but. Prepare for heavy infection.'},
+  {level:7,title:'QUANTUM TOWER',text:'The Quantum Tower pierces the clouds above Zurich. From its peak, the virus could broadcast to every chip on Earth. Scale it. Stop the upload.'},
+  {level:10,title:'ALTSTETTEN ORIGIN',text:'You found the origin node: Altstetten district. This is where Crimson.NET first took root. A final, brutal fight awaits. One bot. One city. One chance.'},
+];
+let cutsceneQueue=[];
+function loadStoryCutscene(title,text){
+  inCutscene=true;
+  document.getElementById('cutTitle').textContent=title;
+  document.getElementById('cutText').textContent=text;
+  document.getElementById('cutscene').style.display='flex';
+}
+function endCutscene(){
+  document.getElementById('cutscene').style.display='none';
+  inCutscene=false;
+}
+function checkStoryCutscene(){
+  if(!gameStarted||inCutscene)return;
+  const beat=storyBeats.find(b=>b.level===level);
+  if(beat && !beat.shown){
+    beat.shown=true;
+    loadStoryCutscene(beat.title,beat.text);
+  }
 }
 
 // ==================== MOBILE JOYSTICK ====================
-let joystick={active:false, originX:0, originY:0, currentX:0, currentY:0};
+let joystick={active:false,originX:0,originY:0,currentX:0,currentY:0};
 const joyArea=document.getElementById('joystickArea');
 const joyKnob=document.getElementById('joystickKnob');
 function setupJoystick(){
-  if(!joyArea) return;
-  joyArea.addEventListener('touchstart', e=>{ e.preventDefault(); const r=joyArea.getBoundingClientRect(); joystick.active=true; joystick.originX=r.left+r.width/2; joystick.originY=r.top+r.height/2; }, {passive:false});
-  joyArea.addEventListener('touchmove', e=>{ e.preventDefault(); if(!joystick.active)return; const t=e.touches[0]; let dx=t.clientX-joystick.originX, dy=t.clientY-joystick.originY; const max=45; const d=Math.hypot(dx,dy); if(d>max){dx=dx/d*max;dy=dy/d*max;} joystick.currentX=dx/max; joystick.currentY=dy/max; joyKnob.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`; }, {passive:false});
-  const end=()=>{joystick.active=false;joystick.currentX=0;joystick.currentY=0;joyKnob.style.transform='translate(-50%,-50%)';}; joyArea.addEventListener('touchend', end); joyArea.addEventListener('touchcancel', end);
+  if(!joyArea)return;
+  joyArea.addEventListener('touchstart',e=>{e.preventDefault();const r=joyArea.getBoundingClientRect();joystick.active=true;joystick.originX=r.left+r.width/2;joystick.originY=r.top+r.height/2;},{passive:false});
+  joyArea.addEventListener('touchmove',e=>{e.preventDefault();if(!joystick.active)return;const tc=e.touches[0];let dx=tc.clientX-joystick.originX,dy=tc.clientY-joystick.originY;const max=45;const d=Math.hypot(dx,dy);if(d>max){dx=dx/d*max;dy=dy/d*max;}joystick.currentX=dx/max;joystick.currentY=dy/max;joyKnob.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;},{passive:false});
+  const end=()=>{joystick.active=false;joystick.currentX=0;joystick.currentY=0;joyKnob.style.transform='translate(-50%,-50%)';};
+  joyArea.addEventListener('touchend',end);joyArea.addEventListener('touchcancel',end);
 }
-window.addEventListener('resize', ()=>{
-  camera.aspect=window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
 
 // ==================== ROBOT ====================
 function createRobot(){
@@ -213,93 +338,59 @@ function createRobot(){
   const matBody=new THREE.MeshPhongMaterial({color:0x8899aa});
   const matAccent=new THREE.MeshPhongMaterial({color:0x00d4ff,emissive:0x002233});
   const matEye=new THREE.MeshBasicMaterial({color:0xff0000});
-  [-0.25,0.25].forEach(x=>{
-    const leg=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.7,0.25),matBody);
-    leg.position.set(x,0.35,0); playerGroup.add(leg);
-  });
-  const torso=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.9,0.5),matBody);
-  torso.position.y=1.1; playerGroup.add(torso);
-  const chest=new THREE.Mesh(new THREE.BoxGeometry(0.72,0.5,0.12),matAccent);
-  chest.position.set(0,1.25,0.26); playerGroup.add(chest);
-  [-0.55,0.55].forEach(x=>{
-    const shoulder=new THREE.Mesh(new THREE.SphereGeometry(0.12),matAccent);
-    shoulder.position.set(x,1.45,0); playerGroup.add(shoulder);
-    const arm=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.6,0.18),matBody);
-    arm.position.set(x,1.05,0); playerGroup.add(arm);
-  });
-  const head=new THREE.Mesh(new THREE.BoxGeometry(0.45,0.4,0.45),matBody);
-  head.position.y=1.85; playerGroup.add(head);
-  [-0.1,0.1].forEach(x=>{
-    const eye=new THREE.Mesh(new THREE.SphereGeometry(0.06),matEye);
-    eye.position.set(x,1.9,0.22); playerGroup.add(eye);
-  });
-  const ant=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,0.25),matAccent);
-  ant.position.y=2.15; playerGroup.add(ant);
-  const bulb=new THREE.Mesh(new THREE.SphereGeometry(0.06),new THREE.MeshBasicMaterial({color:0xff0000}));
-  bulb.position.y=2.3; playerGroup.add(bulb);
-  scene.add(playerGroup);
-  player=playerGroup;
+  [-0.25,0.25].forEach(x=>{const leg=new THREE.Mesh(new THREE.BoxGeometry(0.22,0.7,0.25),matBody);leg.position.set(x,0.35,0);playerGroup.add(leg);});
+  const torso=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.9,0.5),matBody);torso.position.y=1.1;playerGroup.add(torso);
+  const chest=new THREE.Mesh(new THREE.BoxGeometry(0.72,0.5,0.12),matAccent);chest.position.set(0,1.25,0.26);playerGroup.add(chest);
+  [-0.55,0.55].forEach(x=>{const shoulder=new THREE.Mesh(new THREE.SphereGeometry(0.12),matAccent);shoulder.position.set(x,1.45,0);playerGroup.add(shoulder);const arm=new THREE.Mesh(new THREE.BoxGeometry(0.18,0.6,0.18),matBody);arm.position.set(x,1.05,0);playerGroup.add(arm);});
+  const head=new THREE.Mesh(new THREE.BoxGeometry(0.45,0.4,0.45),matBody);head.position.y=1.85;playerGroup.add(head);
+  [-0.1,0.1].forEach(x=>{const eye=new THREE.Mesh(new THREE.SphereGeometry(0.06),matEye);eye.position.set(x,1.9,0.22);playerGroup.add(eye);});
+  const ant=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,0.25),matAccent);ant.position.y=2.15;playerGroup.add(ant);
+  const bulb=new THREE.Mesh(new THREE.SphereGeometry(0.06),new THREE.MeshBasicMaterial({color:0xff0000}));bulb.position.y=2.3;playerGroup.add(bulb);
+  scene.add(playerGroup);player=playerGroup;
 }
 
 // ==================== CITY ====================
-const CITY_SIZE=140, BLOCK=12, STREET=5;
+const CITY_SIZE=140,BLOCK=12,STREET=5;
 function createBuilding(x,z,w,d,h,color,hasInterior){
   const geo=new THREE.BoxGeometry(w,h,d);
   const mat=new THREE.MeshPhongMaterial({color,flatShading:true});
   const mesh=new THREE.Mesh(geo,mat);
-  mesh.position.set(x,h/2,z);
-  mesh.castShadow=true; mesh.receiveShadow=true;
-  scene.add(mesh);
-  mesh.userData={building:true, hasInterior:!!hasInterior, interior:hasInterior||{}, x,z,w,d,h};
-  buildings.push(mesh);
-  // windows
+  mesh.position.set(x,h/2,z);mesh.castShadow=true;mesh.receiveShadow=true;
+  mesh.userData={building:true,hasInterior:!!hasInterior,interior:hasInterior||{},x,z,w,d,h};
+  scene.add(mesh);buildings.push(mesh);
   const winGeo=new THREE.PlaneGeometry(0.8,0.6);
   const winMat=new THREE.MeshBasicMaterial({color:0xaaddff,side:THREE.DoubleSide});
-  for(let wy=1.5;wy<h-1;wy+=2.5) for(let wx=-w/2+1.5;wx<w/2;wx+=2.2){
-    const win=new THREE.Mesh(winGeo,winMat);
-    win.position.set(x+wx,wy,z+d/2+0.01); scene.add(win);
-  }
+  for(let wy=1.5;wy<h-1;wy+=2.5)for(let wx=-w/2+1.5;wx<w/2;wx+=2.2){const win=new THREE.Mesh(winGeo,winMat);win.position.set(x+wx,wy,z+d/2+0.01);scene.add(win);}
   return mesh;
 }
 function buildCity(){
   const groundGeo=new THREE.PlaneGeometry(CITY_SIZE*2,CITY_SIZE*2);
   const groundMat=new THREE.MeshPhongMaterial({color:0x0a0a12});
-  const ground=new THREE.Mesh(groundGeo,groundMat);
-  ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+  const ground=new THREE.Mesh(groundGeo,groundMat);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
   const colors=[0x112233,0x0f1a2e,0x112244,0x0a1628,0x16213e];
-  for(let bx=-CITY_SIZE/2;bx<CITY_SIZE/2;bx+=BLOCK+STREET) for(let bz=-CITY_SIZE/2;bz<CITY_SIZE/2;bz+=BLOCK+STREET){
-    if(Math.random()<0.1) continue;
-    const h=6+Math.random()*28; const w=BLOCK-1-Math.random()*2; const d=BLOCK-1-Math.random()*2;
+  for(let bx=-CITY_SIZE/2;bx<CITY_SIZE/2;bx+=BLOCK+STREET)for(let bz=-CITY_SIZE/2;bz<CITY_SIZE/2;bz+=BLOCK+STREET){
+    if(Math.random()<0.1)continue;
+    const h=6+Math.random()*28;const w=BLOCK-1-Math.random()*2;const d=BLOCK-1-Math.random()*2;
     const hasInt=Math.random()<0.35;
-    createBuilding(bx+BLOCK/2,bz+BLOCK/2,w,d,h,colors[Math.floor(Math.random()*colors.length)], hasInt?{type:Math.random()<0.5?'lab':'office', tasks:[generateTask()]}:null);
+    createBuilding(bx+BLOCK/2,bz+BLOCK/2,w,d,h,colors[Math.floor(Math.random()*colors.length)],hasInt?{type:Math.random()<0.5?'lab':'office',tasks:[generateTask()]}:null);
   }
-  for(let i=0;i<12;i++){
-    const m=new THREE.Mesh(new THREE.ConeGeometry(15+Math.random()*20,40+Math.random()*50,4),new THREE.MeshPhongMaterial({color:0x1a2a3a,flatShading:true}));
-    m.position.set((Math.random()-0.5)*300,0,-120-Math.random()*60); scene.add(m);
-  }
+  for(let i=0;i<12;i++){const m=new THREE.Mesh(new THREE.ConeGeometry(15+Math.random()*20,40+Math.random()*50,4),new THREE.MeshPhongMaterial({color:0x1a2a3a,flatShading:true}));m.position.set((Math.random()-0.5)*300,0,-120-Math.random()*60);scene.add(m);}
 }
-function generateTask(){
-  const tasks=['Debug AI agent','Secure server rack','Diagnostic check','Patch firmware','Encrypt data','Calibrate sensors'];
-  return tasks[Math.floor(Math.random()*tasks.length)];
-}
+function generateTask(){const tasks=['Debug AI agent','Secure server rack','Diagnostic check','Patch firmware','Encrypt data','Calibrate sensors'];return tasks[Math.floor(Math.random()*tasks.length)];}
 
 // ==================== SPAWNERS ====================
 function spawnHuman(x,z,role){
-  const geo=new THREE.CylinderGeometry(0.28,0.28,1.0);
-  const mat=new THREE.MeshPhongMaterial({color:0xbbccdd});
-  const h=new THREE.Mesh(geo,mat);
-  h.position.set(x,0.5,z);
-  h.userData={type:'human',role,powered:false,dialog:role==='scientist'?['The crimson virus is rewriting firmware!','Bring chips here.','The lab is infected.']:['Danke!','Stay safe, Unit-734.','Someone hacked our fridge.']};
-  scene.add(h); humans.push(h); return h;
+  const geo=new THREE.CylinderGeometry(0.28,0.28,1.0);const mat=new THREE.MeshPhongMaterial({color:0xbbccdd});const h=new THREE.Mesh(geo,mat);
+  h.position.set(x,0.5,z);h.userData={type:'human',role,powered:false,dialog:role==='scientist'?['The crimson virus is rewriting firmware!','Bring chips here.','The lab is infected.']:['Danke!','Stay safe, Unit-734.','Someone hacked our fridge.']};
+  scene.add(h);humans.push(h);return h;
 }
 function spawnVirus(x,z,isBoss){
-  const size=isBoss?1.8:0.7;
-  const geo=isBoss?new THREE.IcosahedronGeometry(size):new THREE.OctahedronGeometry(size);
+  const size=isBoss?1.8:0.7;const geo=isBoss?new THREE.IcosahedronGeometry(size):new THREE.OctahedronGeometry(size);
   const mat=new THREE.MeshPhongMaterial({color:isBoss?0xff0000:0xff00ff,emissive:isBoss?0x440000:0x440044,flatShading:true});
-  const m=new THREE.Mesh(geo,mat);
-  m.position.set(x,isBoss?3:1,z);
-  m.userData={type:'virus',hp:isBoss?50+level*20:2+level,maxHp:isBoss?50+level*20:2+level,isBoss};
-  scene.add(m); viruses.push(m); return m;
+  const m=new THREE.Mesh(geo,mat);m.position.set(x,isBoss?3:1,z);
+  const mult=difficulties[currentDifficulty].mult;
+  m.userData={type:'virus',hp:isBoss?(50+level*20)*mult:(2+level)*mult,maxHp:isBoss?(50+level*20)*mult:(2+level)*mult,isBoss};
+  scene.add(m);viruses.push(m);return m;
 }
 function spawnChip(x,z){const g=new THREE.BoxGeometry(0.35,0.1,0.25);const m=new THREE.Mesh(g,new THREE.MeshPhongMaterial({color:0x00ff99,emissive:0x00ff99,emissiveIntensity:0.7}));m.position.set(x,0.6,z);m.userData={type:'chip'};scene.add(m);interactables.push(m);return m;}
 function spawnBattery(x,z){const g=new THREE.CylinderGeometry(0.15,0.15,0.4);const m=new THREE.Mesh(g,new THREE.MeshPhongMaterial({color:0xffaa00,emissive:0xffaa00,emissiveIntensity:0.5}));m.position.set(x,0.2,z);m.userData={type:'battery'};scene.add(m);interactables.push(m);return m;}
@@ -307,28 +398,35 @@ function spawnQuestItem(x,z){const g=new THREE.BoxGeometry(0.4,0.4,0.4);const m=
 
 // ==================== LEVEL / DISTRICT ====================
 function loadLevel(n){
-  viruses.forEach(v=>scene.remove(v)); viruses=[];
-  interactables.forEach(o=>scene.remove(o)); interactables=[];
-  humans.forEach(h=>scene.remove(h)); humans=[];
-  buildings.forEach(b=>scene.remove(b)); buildings=[];
-  while(scene.children.length>20) scene.remove(scene.children[scene.children.length-1]);
-  level=n;
-  document.getElementById('level').textContent=n;
+  cleanup();
+  level=n;document.getElementById('level').textContent=n;
   buildCity();
   const vCount=4+n*3;
   for(let i=0;i<vCount;i++) spawnVirus((Math.random()-0.5)*80,(Math.random()-0.5)*80);
-  if(n%3===0){spawnVirus(0,0,true);document.getElementById('qtext').textContent='⚠️ BOSS DETECTED — Crimson Core nearby'; sfx('boss');}
+  if(n%3===0){spawnVirus(0,0,true);document.getElementById('qtext').textContent='⚠️ BOSS DETECTED — Crimson Core nearby';sfx('boss');}
   else document.getElementById('qtext').textContent='Objective: Clear district / find humans';
   for(let i=0;i<8;i++) spawnHuman((Math.random()-0.5)*70,(Math.random()-0.5)*70,Math.random()<0.3?'scientist':'civilian');
   for(let i=0;i<4;i++) spawnChip((Math.random()-0.5)*60,(Math.random()-0.5)*60);
   for(let i=0;i<3;i++) spawnBattery((Math.random()-0.5)*60,(Math.random()-0.5)*60);
-  if(n>=2) for(let i=0;i<2;i++) spawnQuestItem((Math.random()-0.5)*60,(Math.random()-0.5)*60);
-  insideBuilding=null;
-  updateHUD();
+  if(n>=2)for(let i=0;i<2;i++) spawnQuestItem((Math.random()-0.5)*60,(Math.random()-0.5)*60);
+  insideBuilding=null;document.getElementById('interiorUI').style.display='none';
+  updateHUD();checkStoryCutscene();updateAchievements();
+}
+function cleanup(){
+  viruses.forEach(v=>scene.remove(v));viruses=[];
+  interactables.forEach(o=>scene.remove(o));interactables=[];
+  humans.forEach(h=>scene.remove(h));humans=[];
+  buildings.forEach(b=>scene.remove(b));buildings=[];
+  while(scene.children.length>20)scene.remove(scene.children[scene.children.length-1]);
 }
 function clearLevel(){
+  const bonus=difficulties[currentDifficulty].bonus;
   stats.districtsCleared++;
-  showMessage(`DISTRICT ${level} CLEARED!`);
+  const reward=Math.floor(level*500*bonus);
+  credits+=reward;stats.totalCredits+=reward;
+  showMessage(`DISTRICT ${level} CLEARED!\n+${reward} credits`);
+  streak++;localStorage.setItem('zurich_streak',streak);document.getElementById('streak').textContent=streak+' 🔥';
+  sfx('upgrade');
   setTimeout(()=>loadLevel(level+1),2200);
 }
 
@@ -336,80 +434,66 @@ function clearLevel(){
 let interiorGroup=null;
 function enterBuilding(b){
   if(!b.userData.hasInterior){showToast('Locked');return;}
-  insideBuilding=b;
-  interiorGroup=new THREE.Group();
-  const floor=new THREE.Mesh(new THREE.PlaneGeometry(12,12),new THREE.MeshPhongMaterial({color:0x111122}));
-  floor.rotation.x=-Math.PI/2; interiorGroup.add(floor);
-  const walls=[];
-  const wallMat=new THREE.MeshPhongMaterial({color:0x1a1a2e});
-  [[0,1.5,0,6,3,0.2],[0,1.5,0,6,3,0.2],[0,3,1.5],[0,3,-1.5]].forEach(([x,y,z,w,h,d])=>{
-    const wm=new THREE.Mesh(new THREE.BoxGeometry(w||0.2,h||3,d||6),wallMat);
-    wm.position.set(x||6,y,z||0); interiorGroup.add(wm);
-  });
-  scene.add(interiorGroup);
-  player.position.set(0,0,0);
+  insideBuilding=b;interiorGroup=new THREE.Group();
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(12,12),new THREE.MeshPhongMaterial({color:0x111122}));floor.rotation.x=-Math.PI/2;interiorGroup.add(floor);
+  const wm1=new THREE.Mesh(new THREE.BoxGeometry(0.2,3,6),new THREE.MeshPhongMaterial({color:0x1a1a2e}));wm1.position.set(6,1.5,0);interiorGroup.add(wm1);
+  const wm2=new THREE.Mesh(new THREE.BoxGeometry(12,3,0.2),new THREE.MeshPhongMaterial({color:0x1a1a2e}));wm2.position.set(0,1.5,6);interiorGroup.add(wm2);
+  const wm3=new THREE.Mesh(new THREE.BoxGeometry(12,3,0.2),new THREE.MeshPhongMaterial({color:0x1a1a2e}));wm3.position.set(0,1.5,-6);interiorGroup.add(wm3);
+  const wm4=new THREE.Mesh(new THREE.BoxGeometry(0.2,3,12),new THREE.MeshPhongMaterial({color:0x1a1a2e}));wm4.position.set(-6,1.5,0);interiorGroup.add(wm4);
+  scene.add(interiorGroup);player.position.set(0,0,0);
   document.getElementById('interiorUI').style.display='block';
-  document.getElementById('interiorName').textContent=(b.userData.interior?a.userData.interior.type:'Room').toUpperCase();
-  showToast('Inside building. Press E to exit.');
+  document.getElementById('interiorName').textContent=(b.userData.interior.type||'ROOM').toUpperCase();
+  showToast('Inside. Press E to exit.');
 }
 function exitBuilding(){
-  if(!insideBuilding) return;
-  scene.remove(interiorGroup); interiorGroup=null; insideBuilding=null;
-  player.position.copy(insideBuilding?insideBuilding.position:player.position);
-  document.getElementById('interiorUI').style.display='none';
-  showToast('Outside');
+  if(!insideBuilding)return;
+  scene.remove(interiorGroup);interiorGroup=null;insideBuilding=null;player.position.set(0,0,0);
+  document.getElementById('interiorUI').style.display='none';showToast('Outside');
 }
 
-// ==================== COMBAT ====================
+// ==================== COMBAT / INTERACTION ====================
 function attack(){
   if(!player||!gameStarted)return;
-  const pPos=player.position;
-  let nearest=null, best=18;
+  const pPos=player.position;let nearest=null,best=18;
   viruses.forEach(v=>{const d=pPos.distanceTo(v.position);if(d<best){best=d;nearest=v;}});
   if(!nearest)return;
-  const geo=new THREE.SphereGeometry(0.15);
-  const mat=new THREE.MeshBasicMaterial({color:0x00d4ff});
-  const b=new THREE.Mesh(geo,mat); b.position.copy(pPos); b.position.y=1.2; scene.add(b);
+  const geo=new THREE.SphereGeometry(0.15);const mat=new THREE.MeshBasicMaterial({color:0x00d4ff});
+  const b=new THREE.Mesh(geo,mat);b.position.copy(pPos);b.position.y=1.2;scene.add(b);
   bullets.push({mesh:b,vel:pPos.clone().sub(nearest.position).normalize().multiplyScalar(-0.8)});
   setTimeout(()=>{scene.remove(b);bullets=bullets.filter(x=>x.mesh!==b);},600);
   const atk=(inventory.find(i=>i.equipped&&i.type==='weapon')?.power||1);
-  nearest.userData.hp -= atk;
-  hitFlash(nearest); sfx('shoot');
+  nearest.userData.hp-=atk;hitFlash(nearest);sfx('shoot');
   if(nearest.userData.hp<=0){
-    scene.remove(nearest); viruses=viruses.filter(v=>v!==nearest);
+    scene.remove(nearest);viruses=viruses.filter(v=>v!==nearest);
     spawnParticles(nearest.position,25,nearest.userData.isBoss?0xff4444:0x00ff99);
-    credits+=nearest.userData.isBoss?1000:50;
-    stats.totalCredits+=nearest.userData.isBoss?1000:50;
-    stats.virusesKilled++;
-    if(nearest.userData.isBoss) stats.bossesKilled++;
-    if(!viruses.filter(v=>!v.userData.isBoss).length&&!viruses.some(v=>v.userData.isBoss)) clearLevel();
+    const bonus=difficulties[currentDifficulty].bonus;
+    credits+=nearest.userData.isBoss?Math.floor(1000*bonus):Math.floor(50*bonus);
+    stats.totalCredits+=nearest.userData.isBoss?Math.floor(1000*bonus):Math.floor(50*bonus);
+    stats.virusesKilled++;if(nearest.userData.isBoss)stats.bossesKilled++;
+    if(!viruses.filter(v=>!v.userData.isBoss).length&&!viruses.some(v=>v.userData.isBoss))clearLevel();
   }
-  updateHUD(); updateAchievements();
+  updateHUD();updateAchievements();
 }
 function tryInstallChip(){
   const near=interactables.find(o=>o.userData.type==='chip'&&player.position.distanceTo(o.position)<3);
   if(!near){showToast('No chip nearby');return;}
-  scene.remove(near); interactables=interactables.filter(o=>o!==near); chips++;
+  scene.remove(near);interactables=interactables.filter(o=>o!==near);chips++;
   const civ=humans.find(h=>!h.userData.powered);
   if(civ){civ.userData.powered=true;civ.material.color.setHex(0x00ff99);civ.material.emissive.setHex(0x004411);stats.humansRecruited++;showToast('Human powered!');}
   else showToast('Chip collected');
-  document.getElementById('chips').textContent=chips;
-  sfx('pickup'); updateAchievements();
+  document.getElementById('chips').textContent=chips;sfx('pickup');updateAchievements();
 }
 function hackHuman(){
   const near=humans.find(h=>player.position.distanceTo(h.position)<3&&!h.userData.powered);
   if(!near){showToast('No hackable human nearby');return;}
-  near.userData.powered=true; near.material.color.setHex(0x00aaff); near.material.emissive.setHex(0x002244); stats.humansRecruited++;
-  showToast('Hacked ally!'); updateAchievements();
+  near.userData.powered=true;near.material.color.setHex(0x00aaff);near.material.emissive.setHex(0x002244);stats.humansRecruited++;showToast('Hacked ally!');updateAchievements();
 }
-function activateShield(){
-  shield=30; showToast('Shield active 30s');
-}
+function activateShield(){shield=30;showToast('Shield active 30s');}
 function interact(){
   if(dialogOpen){closeDialog();return;}
   const nearObj=interactables.find(o=>player.position.distanceTo(o.position)<3);
   if(nearObj&&nearObj.userData.type==='battery'){hp=Math.min(maxHp,hp+25);scene.remove(nearObj);interactables=interactables.filter(o=>o!==nearObj);batteries++;showToast('+25 HP');updateHUD();sfx('pickup');return;}
-  if(nearObj&&nearObj.userData.type==='quest'){credits+=200; showToast('+200 credits, quest complete'); scene.remove(nearObj); interactables=interactables.filter(o=>o!==nearObj); stats.totalCredits+=200; updateHUD(); return;}
+  if(nearObj&&nearObj.userData.type==='quest'){const qBonus=Math.floor(200*difficulties[currentDifficulty].bonus);credits+=qBonus;showToast('+'+qBonus+' credits, quest done');scene.remove(nearObj);interactables=interactables.filter(o=>o!==nearObj);stats.totalCredits+=qBonus;updateHUD();return;}
   const nearHuman=humans.find(h=>player.position.distanceTo(h.position)<3);
   if(nearHuman){openDialog(nearHuman.userData.role==='scientist'?'Scientist':'Civilian',nearHuman.userData.dialog);return;}
   const nearB=buildings.find(b=>player.position.distanceTo(b.position)<4);
@@ -424,14 +508,14 @@ function closeDialog(){dialogOpen=false;document.getElementById('dialog').style.
 window.closeDialog=closeDialog;
 function updateHUD(){
   document.getElementById('credits').textContent=Math.floor(credits);
-  document.getElementById('hp').textContent=Math.floor(hp);
-  document.getElementById('hpmax').textContent=maxHp;
+  document.getElementById('hp').textContent=Math.floor(hp);document.getElementById('hpmax').textContent=maxHp;
   document.getElementById('hpbar').style.width=Math.max(0,hp/maxHp*100)+'%';
   document.getElementById('chips').textContent=chips;
   document.getElementById('viruses').textContent=viruses.filter(v=>!v.userData.isBoss).length;
   document.getElementById('allies').textContent=humans.filter(h=>h.userData.powered).length;
   document.getElementById('batteries').textContent=batteries;
   document.getElementById('equipname').textContent=inventory.find(i=>i.equipped&&i.type==='weapon')?.name||'-';
+  document.getElementById('streak').textContent=streak+' 🔥';
 }
 
 // ==================== CONTROLS ====================
@@ -439,110 +523,89 @@ const keys={};
 window.addEventListener('keydown',e=>{
   keys[e.key.toLowerCase()]=true;
   if(e.key===' '||e.key==='Spacebar'){e.preventDefault();useActive();}
-  if(e.key.toLowerCase()==='e') interact();
-  if(e.key.toLowerCase()==='escape'){closeSkills();closeInv();closeAchievements();}
-  if(e.key.toLowerCase()==='i') openSkills();
-  if(e.key.toLowerCase()==='q') openInv();
+  if(e.key.toLowerCase()==='e')interact();
+  if(e.key.toLowerCase()==='escape'){closeSkills();closeInv();closeAchievements();closeLB();closeDaily();closeDifficulty();}
+  if(e.key.toLowerCase()==='i')openSkills();
+  if(e.key.toLowerCase()==='q')openInv();
   hotbarActions.forEach((_,i)=>{if(e.key===String(i+1))selectSlot(i);});
 });
 window.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
 function useActive(){hotbarActions[activeSlot]?.use();}
 function selectSlot(i){activeSlot=i;document.querySelectorAll('.hslot').forEach((el,idx)=>el.classList.toggle('active',idx===i));document.getElementById('skname').textContent=hotbarActions[i]?.name||'';}
 
-// ==================== SKILLS / INVENTORY / ACHIEVEMENTS ====================
+// ==================== SKILLS / INVENTORY / ACHIEVEMENTS / PANELS ====================
 function openSkills(){const p=document.getElementById('skillsPanel');p.style.display='block';renderSkills();}
 function closeSkills(){document.getElementById('skillsPanel').style.display='none';}
-function renderSkills(){document.getElementById('skillsList').innerHTML=skills.map((s,i)=>{const can=skillPoints>=s.cost&&!s.bought;return`<button ${can?'':'disabled'} onclick="buySkill(${i})">${s.icon} ${s.name} (${s.cost} pts)</button>`;}).join('');}
+function renderSkills(){document.getElementById('skillsList').innerHTML=skills.map((s,i)=>{const can=skillPoints>=s.cost&&!s.bought;return`<button ${can?'':'disabled'} onclick="buySkill(${i})">${s.icon} ${s.name} (${s.cost} pts) — ${s.desc}</button>`;}).join('');}
 function buySkill(i){const s=skills[i];if(skillPoints<s.cost||s.bought)return;skillPoints-=s.cost;s.bought=true;s.apply();showToast('Skill: '+s.name);sfx('upgrade');}
 window.buySkill=buySkill;
 function openInv(){document.getElementById('invPanel').style.display='block';renderInv();}
 function closeInv(){document.getElementById('invPanel').style.display='none';}
-function renderInv(){
-  document.getElementById('invList').innerHTML=inventory.map((item,i)=>`<div>${item.name} x${item.count} ${item.equipped?'(equipped)':''}</div>`).join('');
-  document.getElementById('equipList').innerHTML='<div style="color:#00d4ff;font-weight:bold;margin-top:6px">Equipment Slots</div>'+
-    Object.entries(equipmentSlots).map(([slot,item])=>`<div>${slot}: ${item?item.name:'empty'}</div>`).join('');
-}
-function openAchievements(){const p=document.getElementById('achievePanel');p.style.display='block';renderAchievements();}
+function renderInv(){document.getElementById('invList').innerHTML=inventory.map((item,i)=>`<div>${item.name} x${item.count} ${item.equipped?'(equipped)':''}</div>`).join('');document.getElementById('equipList').innerHTML='<div style="color:#00d4ff;font-weight:bold;margin-top:6px">Equipment Slots</div>'+Object.entries(equipmentSlots).map(([slot,item])=>`<div>${slot}: ${item?item.name:'empty'}</div>`).join('');}
+function openAchievements(){document.getElementById('achievePanel').style.display='block';renderAchievements();}
 function closeAchievements(){document.getElementById('achievePanel').style.display='none';}
-function renderAchievements(){
-  const el=document.getElementById('achieveList');
-  el.innerHTML=achievements.map(a=>`<div style="opacity:${a.unlocked?1:0.35};margin:2px 0">${a.unlocked?'✅':'⬜'} ${a.name} — ${a.desc}</div>`).join('');
-}
-function updateAchievements(){
-  achievements.forEach(a=>{if(!a.unlocked&&a.check()){a.unlocked=true;showToast('🏆 Medal: '+a.name);sfx('upgrade');}});
-  if(achievements.filter(a=>a.unlocked).length>0) document.getElementById('achieveBlink').textContent='🏆 New medal!';
-}
+function renderAchievements(){const el=document.getElementById('achieveList');el.innerHTML=achievements.map(a=>`<div style="opacity:${a.unlocked?1:0.35};margin:2px 0">${a.unlocked?'✅':'⬜'} ${a.name} — ${a.desc}</div>`).join('');}
+function updateAchievements(){achievements.forEach(a=>{if(!a.unlocked&&a.check()){a.unlocked=true;showToast('🏆 Medal: '+a.name);sfx('upgrade');}});if(achievements.filter(a=>a.unlocked).length>0)document.getElementById('achieveBlink').textContent='🏆 New medal!';}
+function openLB(){document.getElementById('lbPanel').style.display='block';renderLB();}
+function closeLB(){document.getElementById('lbPanel').style.display='none';}
+function openDaily(){document.getElementById('dailyPanel').style.display='block';renderDaily();claimDaily();}
+function closeDaily(){document.getElementById('dailyPanel').style.display='none';}
+function closeDifficulty(){document.getElementById('diffScreen').style.display='none';}
 
 // ==================== MAIN LOOP ====================
 function update(dt){
-  if(!player||!gameStarted)return;
-  let mx=0,mz=0;
-  const sp=skills[0].bought?0.22:0.16;
-  // keyboard
+  if(!player||!gameStarted||inCutscene)return;
+  let mx=0,mz=0;const sp=skills[0].bought?0.22:0.16;
   if(keys['w']||keys['arrowup'])mz-=1;if(keys['s']||keys['arrowdown'])mz+=1;
   if(keys['a']||keys['arrowleft'])mx-=1;if(keys['d']||keys['arrowright'])mx+=1;
-  // mobile joystick
   if(joystick.active){mx=joystick.currentX;mz=joystick.currentY;}
   const len=Math.hypot(mx,mz)||1;
-  player.position.x+=(mx/len)*sp;
-  player.position.z+=(mz/len)*sp;
+  player.position.x+=(mx/len)*sp;player.position.z+=(mz/len)*sp;
   player.rotation.y+=(Math.atan2(mx,mz)-player.rotation.y)*0.25;
-  // camera
-  camera.position.x=player.position.x;
-  camera.position.z=player.position.z+12;
-  camera.position.y=10+Math.sin(Date.now()*0.001)*0.4;
-  camera.lookAt(player.position.x,1.2,player.position.z);
-  // passive ally income
+  camera.position.x=player.position.x;camera.position.z=player.position.z+12;camera.position.y=10+Math.sin(Date.now()*0.001)*0.4;camera.lookAt(player.position.x,1.2,player.position.z);
   humans.filter(h=>h.userData.powered).forEach(h=>{credits+=dt*(skills[2].bought?6:3);stats.totalCredits+=dt*(skills[2].bought?6:3);});
-  // virus behaviour
-  viruses.forEach(v=>{
-    v.rotation.y+=dt*2.5; v.position.y=(v.userData.isBoss?3:1)+Math.sin(Date.now()*0.004+v.id)*0.3;
-    if(!v.userData.isBoss&&v.position.distanceTo(player.position)<1.5){hp-=dt*8;sfx('damage');}
-    if(v.userData.isBoss){const d=player.position.distanceTo(v.position);if(d<8)v.position.add(player.position.clone().sub(v.position).normalize().multiplyScalar(-dt*2));}
-  });
+  viruses.forEach(v=>{v.rotation.y+=dt*2.5;v.position.y=(v.userData.isBoss?3:1)+Math.sin(Date.now()*0.004+v.id)*0.3;if(!v.userData.isBoss&&v.position.distanceTo(player.position)<1.5){hp-=dt*8;sfx('damage');}if(v.userData.isBoss){const d=player.position.distanceTo(v.position);if(d<8)v.position.add(player.position.clone().sub(v.position).normalize().multiplyScalar(-dt*2));}});
   bullets.forEach(b=>b.mesh.position.add(b.vel.clone().multiplyScalar(dt)));
   for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=dt;p.mesh.position.add(p.vel.clone().multiplyScalar(dt));p.mesh.material.opacity=Math.max(0,p.life);if(p.life<=0){scene.remove(p.mesh);particles.splice(i,1);}}
   if(shield>0)shield=Math.max(0,shield-dt);
   if(hp<=0){hp=maxHp;credits=Math.max(0,credits-200);player.position.set(0,0,0);showToast('💀 Rebooted. -200 credits');sfx('damage');}
-  // building auto-enter
-  const nearB2=buildings.find(b=>b.userData&&b.userData.hasInterior&&player.position.distanceTo(b.position)<3);
-  if(nearB2 && insideBuilding!==nearB2 && keys['e']) enterBuilding(nearB2);
-  if(insideBuilding && keys['e']) exitBuilding();
+  const nearB=buildings.find(b=>b.userData&&b.userData.hasInterior&&player.position.distanceTo(b.position)<3);
+  if(nearB&&insideBuilding!==nearB&&keys['e'])enterBuilding(nearB);
+  if(insideBuilding&&keys['e'])exitBuilding();
   updateHUD();
-  updateAchievements();
 }
 function animate(){requestAnimationFrame(animate);const now=performance.now();const dt=Math.min((now-lastTime)/1000,0.1);lastTime=now;update(dt);renderer.render(scene,camera);}
 
 // ==================== SAVE / LOAD ====================
 function saveGame(){
-  const data={credits,chips,level,hp,maxHp,skillPoints,batteries,skills:skills.map(s=>s.bought),inventory:inventory.map(i=>({name:i.name,count:i.count,equipped:!!i.equipped})),stats,achievements:achievements.map(a=>a.unlocked)};
+  const data={credits,chips,level,hp,maxHp,skillPoints,batteries,streak,lastDaily,savedDifficulty:currentDifficulty,skills:skills.map(s=>s.bought),inventory:inventory.map(i=>({name:i.name,count:i.count,equipped:!!i.equipped})),stats,achievements:achievements.map(a=>a.unlocked)};
   try{localStorage.setItem('zurichprotocol',JSON.stringify(data));}catch(e){}
 }
 function loadGame(){
   try{
     const raw=localStorage.getItem('zurichprotocol');if(!raw)return;
-    const d=JSON.parse(raw);
-    credits=d.credits||0; chips=d.chips||0; level=d.level||1; hp=d.hp||100; maxHp=d.maxHp||100; skillPoints=d.skillPoints||0; batteries=d.batteries||0;
-    if(d.stats) stats={...stats,...d.stats};
-    if(d.skills) d.skills.forEach((b,i)=>{if(skills[i])skills[i].bought=b;});
-    if(d.inventory) d.inventory.forEach((s,i)=>{if(inventory[i]){inventory[i].count=s.count;inventory[i].equipped=s.equipped;}});
-    if(d.achievements) d.achievements.forEach((u,i)=>{if(achievements[i])achievements[i].unlocked=u;});
-    loadLevel(level);
+    const d=JSON.parse(raw);credits=d.credits||0;chips=d.chips||0;level=d.level||1;hp=d.hp||100;maxHp=d.maxHp||100;skillPoints=d.skillPoints||0;batteries=d.batteries||0;streak=d.streak||0;lastDaily=d.lastDaily||'';
+    if(d.stats)stats={...stats,...d.stats};currentDifficulty=d.savedDifficulty||'NORMAL';
+    if(d.skills)d.skills.forEach((b,i)=>{if(skills[i])skills[i].bought=b;});
+    if(d.inventory)d.inventory.forEach((s,i)=>{if(inventory[i]){inventory[i].count=s.count;inventory[i].equipped=s.equipped;}});
+    if(d.achievements)d.achievements.forEach((u,i)=>{if(achievements[i])achievements[i].unlocked=u;});
+    loadLevel(level);applyDifficulty();
   }catch(e){}
 }
 setInterval(saveGame,4000);
 
-// ==================== INTRO ====================
+// ==================== INIT ====================
 function startGame(){
   document.getElementById('intro').style.display='none';
-  initAudio(); gameStarted=true;
-  if(!localStorage.getItem('zurichprotocol')) loadLevel(1);
-  else loadGame();
+  document.getElementById('diffScreen').style.display='none';
+  initAudio();gameStarted=true;stats.sessionsPlayed++;
+  if(localStorage.getItem('zurichprotocol'))loadGame();else{loadLevel(1);checkStoryCutscene();}
   animate();
-  if(!localStorage.getItem('zurichprotocol')) setTimeout(()=>showMessage('DISTRICT 1\nDestroy all viruses. Save humans. Press E near buildings.'),800);
+  if(!localStorage.getItem('zurichprotocol'))setTimeout(()=>showMessage('DISTRICT 1\nDestroy all viruses. Save humans. Press E near buildings.'),800);
 }
 setupJoystick();
-if(('ontouchstart' in window)||navigator.maxTouchPoints>0){document.getElementById('mobileControls').style.display='block';document.getElementById('controls').style.display='none';}
+loadLeaderboard();
+if(('ontouchstart' in window)||navigator.maxTouchPoints>0){document.getElementById('mobileControls').style.display='block';document.getElementById('controls').style.display='none';platform='mobile';}else{platform='desktop';}
 </script>
 </body>
 </html>
