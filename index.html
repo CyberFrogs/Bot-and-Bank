@@ -289,7 +289,8 @@ function setDifficulty(mode){
   document.getElementById('diffScreen').style.display='none';
   document.getElementById('intro').style.display='none';
   document.getElementById('cutscene').style.display='none';
-  initAudio(); gameStarted=true;
+  initAudio(); initSnow(); gameStarted=true; stats.sessionsPlayed++;
+  if(!player) createRobot();
   applyDifficulty();
   loadStoryCutscene('DISTRICT 1','Entering Zurich sector. All connected humans are at risk. Insert chips to recruit allies.');
   animate();
@@ -641,6 +642,7 @@ function startGame(){
   document.getElementById('intro').style.display='none';
   document.getElementById('diffScreen').style.display='none';
   initAudio();initSnow();gameStarted=true;stats.sessionsPlayed++;
+  if(!player) createRobot();
   if(localStorage.getItem('zurichprotocol'))loadGame();else{loadLevel(1);checkStoryCutscene();}
   animate();
   if(!localStorage.getItem('zurichprotocol'))setTimeout(()=>showMessage('DISTRICT 1\nDestroy all viruses. Save humans. Press E near buildings.'),800);
